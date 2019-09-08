@@ -4,23 +4,10 @@ import { apiList, configData, getNoLoad, get, post } from "@/http/api.js";
 import { checkUpdateVersion } from "@/utils/index";
 export default {
   data() {
-    return {
-      DefaultsCity: {
-        id: "",
-        name: ""
-      },
-      primarys: {
-        latitude: "",
-        longitude: ""
-      }
-    };
+    return {};
   },
   onShow() {
     checkUpdateVersion();
-    this.getLatLon();
-    this.getDefaultsCity();
-    this.clearToken()
-                   this.getToken()
      //检查手机型号做适配
     var _that = this;
     wx.getSystemInfo({
@@ -41,63 +28,9 @@ export default {
   },
   computed: {
     ...mapState({
-      Tokens: state => state.Tokens
     })
   },
   methods: {
-    ...mapMutations(["setToken", "setmallCityDefaults", "primaryMain","setModel"]),
-    // 默认选择站点
-    getDefaultsCity() {
-      let that = this;
-      let cityData = wx.getStorageSync("cityData") || {id:110100,name:'北京站'}
-      that.setmallCityDefaults(cityData);
-      wx.setStorageSync("cityData", cityData);
-    },
-    // 当前定位
-    getLatLon() {
-      let that = this;
-      wx.getLocation({
-        type: "wgs84",
-        success: res => {
-          var latitude = res.latitude;
-          var longitude = res.longitude;
-          var speed = res.speed;
-          var accuracy = res.accuracy;
-          that.primarys = {
-            latitude: res.latitude,
-            longitude: res.longitude
-          };
-          wx.setStorageSync("primary", that.primarys);
-          that.primaryMain(that.primarys);
-        },
-        fail: () => {
-          that.primarys = {
-            latitude: "",
-            longitude: ""
-          };
-          wx.setStorageSync("primary", that.primarys);
-          that.primaryMain(that.primarys);
-        }
-      });
-    },
-    clearToken(){
-      let delTokens =  {
-            token: '',
-            user_id: '',
-            openid: '',
-            unionid: ''
-        }
-    this.setToken(delTokens)
-    },
-    // 触发获取token
-    getToken(){
-      let params = {
-        url: apiList.mallCityDefaults,
-      };
-      get(params).then(res => {
-        // console.log(1);
-      });
-    }
   }
 };
 </script>

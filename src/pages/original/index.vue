@@ -1,25 +1,311 @@
 <template>
-  <div class="content"> 
+  <div class="content">
+    <div class="hd">
+      <div class="group">
+        <div class="group-frist">
+          <scroll-view scroll-x="true" class="group-frist-con">
+            <div
+              v-for="(item,index) in Groups" :key="index" class="group-frist-item">
+              <span class="item-name">{{item.text}}</span>
+              <span class="item-line"></span>
+            </div>
+          </scroll-view>
+        </div>
+      </div>
+    </div>
+    <div class="article">
+        <div class="article-item" @click="linkToDes(item.id)">
+          <div class="item-info">
+            <p class="item-title">2019最新网赚项目，新入行的都赚大钱了，你还在考虑吗？</p>
+            <div class="hd-des G-fx-cb">
+              <div class="hd-des-left G-fx-cc">
+                <span class="article-group G-fx-cc">选购安装</span>
+                <span class="article-name">2019-12-09</span>
+              </div>
+              <p class="hd-des-right G-fx-cc">
+                <i class="article-views G-Fsize-14 G-color-666 iconfont icon-iconset0207"></i>
+                <span class="G-Fsize-12 G-color-999">100人</span>
+              </p>
+            </div>
+          </div>
+          <img src="http://n.sinaimg.cn/news/transform/700/w1000h500/20190905/6c5f-ieftthx1425370.jpg" class="item-img">
+        </div>
+    </div>
+    <empty :showStatus="listData.length == 0"></empty>
   </div>
 </template>
 
 <script>
 import { apiList, configData, getNoLoad, get, post } from "@/http/api.js";
 import { mapState, mapMutations } from "vuex";
-import { getUrlHistory,sendFormId,showPopup,exchangeEl  } from "@/utils/index.js";
 export default {
   onLoad(res) {
-
-  },
-  components: {
+    // this.resetData();
+    // this.getLists();
+    this.getGroups(8, "first");
   },
   data() {
     return {
+      Groups:[{text:'拉新赚钱',id:1},{text:'注册有礼',id:2},{text:'游戏赚钱',id:3},{text:'挂机项目',id:4},{text:'0元领礼',id:5}]
     };
   },
-  watch: {}
+  computed: {
+  },
+  methods: {
+    getLists() {
+      let that = this;
+      let params = {
+        url: apiList.getLists,
+        data: that.listSearchData
+      };
+      get(params).then(res => {
+        that.listSearchData.page = res.data.next_page;
+        that.listData = [...that.listData, ...res.data.items];
+      });
+    },
+    //刷新
+    getListsSel() {
+      let that = this;
+      let params = {
+        url: apiList.getLists,
+        data: that.listSearchData
+      };
+      get(params).then(res => {
+        that.listSearchData.page = res.data.next_page;
+        that.listData = res.data.items;
+      });
+    },
+    getGroups(id, type, hasChild = 1) {
+      if (
+        id === this.listSearchData.group_id &&
+        this.Groups.second.data.length == 0
+      ) {
+        return false;
+      }
+      let that = this;
+      if (hasChild == 0) {
+        that.Groups["first"].selectItem = id;
+        this.listSearchData.group_id = id;
+        this.Groups.second = {
+          data: [],
+          selectItem: 0
+        };
+        this.listSearchData.page = 1;
+        this.getListsSel();
+        return false;
+      }
+      let params = {
+        url: apiList.getWikiGroups,
+        data: {
+          parent_id: id
+        }
+      };
+      get(params).then(res => {
+        let selectType = type === "first" ? "second" : "first";
+
+        if (type == "first") {
+          that.Groups[type].data = [...that.Groups[type].data, ...res.data];
+        } else {
+          that.Groups[type].data = res.data;
+        }
+        that.Groups[selectType].selectItem = id;
+      });
+    }
+  },
+  onReachBottom() {
+    if (this.listSearchData.page == 0) {
+      //加载完成
+      return false;
+    }
+    this.getLists();
+  },
+  onPullDownRefresh() {
+    wx.showNavigationBarLoading();
+    this.listSearchData.page = 1;
+    this.getListsSel();
+    setTimeout(() => {
+      wx.hideNavigationBarLoading();
+      wx.stopPullDownRefresh();
+    }, 1000);
+  },
+  watch: {
+  }
 };
 </script>
 
 <style lang="scss" scoped>
+$orange: #f36e20;
+.group {
+  border-top: 0.01rem solid #e7e7e7;
+  .group-frist {
+    display: flex;
+    border-bottom: 0.01rem solid #e7e7e7;
+    background-color: #fff;
+
+    .group-frist-con {
+      width: 100%;
+      height: 0.4rem;
+      white-space: nowrap;
+    }
+  }
+
+  .group-frist-item {
+    position: relative;
+    padding: 0 0.1rem;
+    height: 100%;
+    display: inline-flex;
+
+    .item-name {
+      line-height: 0.4rem;
+      font-size: 0.16rem;
+      color: #999;
+    }
+
+    .item-line {
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 0.2rem;
+      height: 0.03rem;
+      background-color: #fff;
+      border-radius: 0.02rem 0.02rem 0 0;
+    }
+
+    &.active {
+      .item-name {
+        color: $orange;
+      }
+
+      .item-line {
+        background-color: $orange;
+      }
+    }
+  }
+
+  .group-second {
+    display: flex;
+    background-color: #fff;
+    border-bottom: 0.01rem solid #e7e7e7;
+
+    .group-second-con {
+      width: 3.75rem;
+      height: 0.33rem;
+      white-space: nowrap;
+    }
+  }
+
+  .group-second-item {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    height: 100%;
+    padding: 0 0.18rem;
+
+    .item-name {
+      font-size: 0.14rem;
+      color: #999;
+    }
+
+    .item-line {
+      position: absolute;
+      top: 50%;
+      right: 0;
+      transform: translateY(-50%);
+      width: 0.01rem;
+      height: 0.13rem;
+      background-color: #e7e7e7;
+    }
+
+    &.active {
+      .item-name {
+        color: $orange;
+      }
+    }
+  }
+}
+
+.tag-con {
+  border-bottom: 0.01rem solid #e7e7e7;
+  width: 3.75rem;
+  height: 0.4rem;
+  padding: 0.07rem 0 0.07rem 0.15rem;
+
+  .tag-item {
+    display: inline-flex;
+    align-items: center;
+    padding: 0 0.13rem;
+    height: 0.26rem;
+    border-radius: 0.13rem;
+    border: 0.01rem solid #cccccc;
+
+    .iconfont {
+      color: $orange;
+      font-size: 0.17rem;
+    }
+    .tag-name {
+      font-size: 0.14rem;
+      color: $orange;
+    }
+  }
+}
+
+.article {
+  padding: 0 0.15rem;
+  background-color: #fff;
+}
+.article-item {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: .1rem 0;
+  border-bottom: 1px solid #e7e7e7;
+  .item-info {
+    width: 2rem;
+    .item-title {
+      margin-bottom: .15rem;
+      font-size: 0.17rem;
+      word-break: break-all;
+      line-height: 1.5;
+      overflow: hidden;
+      text-overflow:ellipsis;//文本溢出显示省略号
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+    }
+    .hd-des-left {
+      .article-group {
+        font-size: 0.12rem;
+        padding: 0.02rem;
+        color: $orange;
+        border: 0.01rem solid $orange;
+        border-radius: 0.03rem;
+        display: inline-block;
+      }
+      .article-name {
+        // width: 0.7rem;
+        overflow:hidden;
+        text-overflow:ellipsis;
+        white-space:nowrap;
+        font-size: 0.12rem;
+        color: #999;
+        margin-left: 0.07rem;
+      }
+      .article-time {
+        font-size: 0.12rem;
+        color: #999;
+        margin-left: 0.03rem;
+      }
+    }
+  }
+  .item-img{
+    width: 1.34rem;
+    height: .75rem;
+    border-radius: .03rem;
+  }
+}
+.article-item:last-child{
+  border-bottom: none;
+}
+
 </style>
