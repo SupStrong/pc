@@ -21,13 +21,12 @@
                 class="brand"
                 v-for="(item,index) in cateItems[curIndex].children"
                 :key="index"
-                @click="setRouter('/pages/brand/details/main',item.id)"
+                @click="setRouter('/pages/goods/list/main',item.id)"
               >
                 <img class="img" :src="item.logo" alt>
                 <div class="brandName G-one-cloum">{{item.name}}</div>
               </div>
           </div>
-
         </view>
       </view>
   </div>
@@ -121,7 +120,10 @@ export default {
     switchRightTab: function (index) {
       index = parseInt(index);
       this.curIndex = index;
-    }
+    },
+    setRouter (path,id){
+        this.$router.push({ path: path, query: {storeId:this.storeId,id:id,guide_id:this.guideId} })
+    },
   },
   watch: {}
 };
