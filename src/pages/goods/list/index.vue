@@ -1,7 +1,7 @@
 <template>
     <div class="goods-ul">
       <div class="li" v-for="(item,index) in goods" :key="index"
-      @click="setRouter('/pages/goods/index/main',item.id)">
+      @click="setRouter('/pages/goods/details/main',item.id)">
         <div class="img-box">
           <img :src="item.cover" alt="">
         </div>
@@ -35,7 +35,7 @@ export default {
   computed: {},
   methods: {
     setRouter (path,id){
-        this.$router.push({ path: path, query: {storeId:this.storeId,id:id,guide_id:this.guideId} })
+        this.$router.push({ path: path, query: {} })
     },
 
   },

@@ -1,8 +1,9 @@
 {
     "pages": [
+        "pages/goods/list/main",
+        "pages/goods/details/main",
         "pages/index/main",
         "pages/brand/main",
-        "pages/goods/list/main",
         "pages/original/main",
         "pages/user/main"
     ],
