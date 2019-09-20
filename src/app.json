@@ -1,11 +1,12 @@
 {
     "pages": [
-        "pages/goods/list/main",
-        "pages/goods/details/main",
         "pages/index/main",
-        "pages/brand/main",
         "pages/original/main",
-        "pages/user/main"
+        "pages/original-details/main",
+        "pages/resources/main", 
+        "pages/goods/list/main",       
+        "pages/goods/details/main",
+        "pages/brand/main"
     ],
     "window": {
         "backgroundTextStyle": "light",
@@ -32,19 +33,19 @@
                 "pagePath": "pages/brand/main",
                 "iconPath": "static/images/user/bar2.png",
                 "selectedIconPath": "static/images/user/bar02.png",
-                "text": "列表"
+                "text": "领优惠券"
+            },
+            {
+                "pagePath": "pages/resources/main",
+                "iconPath": "static/images/user/bar1.png",
+                "selectedIconPath": "/static/images/user/bar01.png",
+                "text": "虚拟资源"
             },
             {
                 "pagePath": "pages/original/main",
                 "iconPath": "static/images/user/bar3.png",
                 "selectedIconPath": "static/images/user/bar03.png",
-                "text": "吐槽"
-            },
-            {
-                "pagePath": "pages/user/main",
-                "iconPath": "static/images/user/bar4.png",
-                "selectedIconPath": "static/images/user/bar04.png",
-                "text": "我的"
+                "text": "吐槽大会"
             }
         ]
     }

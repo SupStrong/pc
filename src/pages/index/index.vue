@@ -84,6 +84,21 @@
             </div>
           </div>
       </div>
+      <div class="hot-goods">
+        <div class="hot-day">
+            <div class="title fl-row-leftNowrap">
+            <div class="text">今日头条</div>
+          </div>
+            <div class="hotday-cont">
+                <ul>
+                    <li><i>1</i>.<a href="http://weixin.cw100.com/wiki/show/416" class="external">二次装修只因橱柜没选好，选橱柜只看外观，...</a></li>
+                    <li><i>2</i>.<a href="https://www.toutiao.com/i6700801129749414411" class="external">纯干货丨洗碗机选购指南，不搞懂这些千万别...</a></li>
+                    <li><i>3</i>.<a href="http://weixin.cw100.com/wiki/show/251" class="external">净水器品牌鱼龙混杂，如何知道净水器品牌靠...</a></li>
+                    <li><i>4</i>.<a href="http://weixin.cw100.com/wiki/show/250" class="external">浴霸的安装注意事项，不要忽略头顶上的危险</a></li>
+                </ul>
+            </div>
+        </div>
+      </div>
   </div>
 </template>
 
@@ -321,5 +336,148 @@ export default {
         border-bottom:0;
     }
    }
+.hot-day{
+    width: 3.75rem;
+    margin-top: .1rem;
+    overflow: hidden;
+    background-color: #fff;
+    margin-bottom:15px;
+    .hotday-title{
+        padding-left: .15rem;
+        height: .3rem;
+        background-color: #fff;
+        p{
+            padding-top: .1rem;
+        }
+        i{
+            font-size: .16rem;
+            color: rgb(241,58,58)
+        }
+        img{
+            width: .71rem;
+            height: .17rem;
+            margin-left: .1rem;
+        }
+    }
+    .hotday-cont{
+        width: 3.75rem;
+        background-color: #fff;
+        ul{
+            width: 3.45rem;
+            margin: 0 auto;
+            li{
+                width: 100%;
+                color:#f01010;
+                height: .4rem;
+                border-bottom: .01rem solid #eee;
+                font-size: .16rem;
+                display:flex;
+                align-items:center;
+                i{
+                    font-size: .16rem;
+                }
+                a{
+                    font-size: .16rem;
+                    color: #333333;
+                    margin-left: .08rem;
+                    line-height: 1.29;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    display: -webkit-box;
+                    -webkit-line-clamp: 1;
+                    -webkit-box-orient: vertical;
+                } 
+            }
+            li:last-child{
+                border: 0
+            }
+        }
+    }
+}
+// 热门
+.hot-door{
+    width: 3.75rem;
+    overflow: hidden;
+    background-color: #fff;
+    .door-title{
+        padding-left: .15rem;
+        height: .3rem;
+        p{
+            padding-top: .1rem;
+            i{
+                font-size: .18rem;
+                color: rgb(243,110,32)
+            }
+            img{
+                width: .71rem;
+                height: .17rem;
+                margin-left: .06rem;
+            }
+        }
+        i{
+            font-size: .18rem;
+            color: rgb(243,110,32)
+        }
+        img{
+            width: .71rem;
+            height: .17rem;
+            margin-left: .06rem;
+        }
+    }
+    .door-cont{
+        width: 3.45rem;
+        margin: 0 auto;
+        margin-top: .1rem;
+        overflow: hidden;
+        ul{
+            width: 3.45rem;
+            overflow: hidden;
+            height: 1.29rem;
+            li{
+                margin-right: .1rem;
+                margin-bottom: .15rem;
+                float: left;
+                box-sizing: border-box;
+                span{
+                    box-sizing: border-box;
+                    font-size: .14rem;
+                    color: #666666;
+                    padding: .07rem .13rem;
+                    border: 0.006rem solid #cccccc;
+                    border-radius: .18rem;
+                    display: inline-block;  
+                    a{
+                        color: #666;
+                    }
+                }
+            }
+        }
+        ul.door-start{
+            height: auto;
+        }
+        ul.door-over{
+            height: 1.29rem;
+        }
+        .door-more{
+            height: .23rem;
+            span{
+                font-size: .12rem;
+                color: #333333;
+            }
+            p{
+                line-height: 1.29;
+            }
+            i{
+                font-size: .11rem;
+                color: #f36e20;
+                margin-left: .03rem;
+                height: .11rem;
+            }
+            i.sel{
+                transform: rotate(180deg);
+            }
+        }
+    }
+}
 
 </style>

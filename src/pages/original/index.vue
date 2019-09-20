@@ -14,7 +14,7 @@
       </div>
     </div>
     <div class="article">
-        <div class="article-item" @click="linkToDes(item.id)">
+        <div class="article-item" @click="setRouter('/pages/original-details/main',12)">
           <div class="item-info">
             <p class="item-title">2019最新网赚项目，新入行的都赚大钱了，你还在考虑吗？</p>
             <div class="hd-des G-fx-cb">
@@ -31,7 +31,6 @@
           <img src="http://n.sinaimg.cn/news/transform/700/w1000h500/20190905/6c5f-ieftthx1425370.jpg" class="item-img">
         </div>
     </div>
-    <empty :showStatus="listData.length == 0"></empty>
   </div>
 </template>
 
@@ -42,7 +41,7 @@ export default {
   onLoad(res) {
     // this.resetData();
     // this.getLists();
-    this.getGroups(8, "first");
+    // this.getGroups(8, "first");
   },
   data() {
     return {
@@ -109,6 +108,13 @@ export default {
           that.Groups[type].data = res.data;
         }
         that.Groups[selectType].selectItem = id;
+      });
+    },
+    setRouter(path, id, n, t, s) {
+      console.log(path,id)
+      this.$router.push({
+        path: path,
+        query: { id: id, name: n, title: t, search: s }
       });
     }
   },
