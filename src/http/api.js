@@ -30,7 +30,7 @@ export const getNoLoad = (params) => {
     return getFly().get(`${host}${params.url}`, params.data)
 };
 
-// 不带load的post
+// 不带load的postgb
 export const postNoLoad = (params) => {
     return getFly().post(`${host}${params.url}`, params.data)
 };

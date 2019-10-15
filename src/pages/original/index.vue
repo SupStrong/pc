@@ -5,8 +5,8 @@
         <div class="group-frist">
           <scroll-view scroll-x="true" class="group-frist-con">
             <div
-              v-for="(item,index) in Groups" :key="index" class="group-frist-item">
-              <span class="item-name">{{item.text}}</span>
+              v-for="(item,index) in Groups" :key="index" @click="getGroups(item.class_id)" class="group-frist-item">
+              <span class="item-name">{{item.name}}</span>
               <span class="item-line"></span>
             </div>
           </scroll-view>
@@ -14,21 +14,21 @@
       </div>
     </div>
     <div class="article">
-        <div class="article-item" @click="setRouter('/pages/original-details/main',12)">
+        <div class="article-item" v-for="(item,index) in listData" @click="setRouter('/pages/original-details/main',item._id)">
           <div class="item-info">
-            <p class="item-title">2019最新网赚项目，新入行的都赚大钱了，你还在考虑吗？</p>
+            <p class="item-title">{{item.title}}</p>
             <div class="hd-des G-fx-cb">
               <div class="hd-des-left G-fx-cc">
-                <span class="article-group G-fx-cc">选购安装</span>
-                <span class="article-name">2019-12-09</span>
+                <span class="article-group G-fx-cc">{{item.interest_name}}</span>
+                <span class="article-name">{{item.date}}</span>
               </div>
               <p class="hd-des-right G-fx-cc">
                 <i class="article-views G-Fsize-14 G-color-666 iconfont icon-iconset0207"></i>
-                <span class="G-Fsize-12 G-color-999">100人</span>
+                <span class="G-Fsize-12 G-color-999">{{item.number != undefined ? item.number : 0 }}人浏览</span>
               </p>
             </div>
           </div>
-          <img src="http://n.sinaimg.cn/news/transform/700/w1000h500/20190905/6c5f-ieftthx1425370.jpg" class="item-img">
+          <img :src="item.image" class="item-img">
         </div>
     </div>
   </div>
@@ -41,80 +41,42 @@ export default {
   onLoad(res) {
     // this.resetData();
     // this.getLists();
-    // this.getGroups(8, "first");
+    // /get/info/class
+    this.getInfoClass();
+    this.getGroups(1);
   },
   data() {
     return {
-      Groups:[{text:'拉新赚钱',id:1},{text:'注册有礼',id:2},{text:'游戏赚钱',id:3},{text:'挂机项目',id:4},{text:'0元领礼',id:5}]
+      Groups:[],
+      listData:[]
     };
   },
   computed: {
   },
   methods: {
-    getLists() {
-      let that = this;
-      let params = {
-        url: apiList.getLists,
-        data: that.listSearchData
-      };
-      get(params).then(res => {
-        that.listSearchData.page = res.data.next_page;
-        that.listData = [...that.listData, ...res.data.items];
-      });
-    },
-    //刷新
-    getListsSel() {
-      let that = this;
-      let params = {
-        url: apiList.getLists,
-        data: that.listSearchData
-      };
-      get(params).then(res => {
-        that.listSearchData.page = res.data.next_page;
-        that.listData = res.data.items;
-      });
-    },
-    getGroups(id, type, hasChild = 1) {
-      if (
-        id === this.listSearchData.group_id &&
-        this.Groups.second.data.length == 0
-      ) {
-        return false;
-      }
-      let that = this;
-      if (hasChild == 0) {
-        that.Groups["first"].selectItem = id;
-        this.listSearchData.group_id = id;
-        this.Groups.second = {
-          data: [],
-          selectItem: 0
-        };
-        this.listSearchData.page = 1;
-        this.getListsSel();
-        return false;
-      }
-      let params = {
-        url: apiList.getWikiGroups,
-        data: {
-          parent_id: id
+    getInfoClass() {
+        let params = {
+            url: 'get/info/class',
+            data: {}
         }
-      };
-      get(params).then(res => {
-        let selectType = type === "first" ? "second" : "first";
-
-        if (type == "first") {
-          that.Groups[type].data = [...that.Groups[type].data, ...res.data];
-        } else {
-          that.Groups[type].data = res.data;
+        get(params).then(res => {
+            this.Groups = res.data;
+        })
+    },
+    getGroups(id) {
+      let params = {
+            url: 'get/info/list',
+            data: {interest:id}
         }
-        that.Groups[selectType].selectItem = id;
-      });
+        post(params).then(res => {
+          this.listData = res.data;
+        })
     },
     setRouter(path, id, n, t, s) {
       console.log(path,id)
       this.$router.push({
         path: path,
-        query: { id: id, name: n, title: t, search: s }
+        query: { id: id}
       });
     }
   },

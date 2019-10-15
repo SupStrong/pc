@@ -1,15 +1,15 @@
 <template>
   <div class="content">
     <div class="hd G-bg-white">
-      <p class="article-title">标题我是标题我是标题我是标题我是标题我是标题我是标题我是标题我是标题</p>
+      <p class="article-title">{{routeData.title}}</p>
       <div class="hd-des G-fx-cb">
         <div class="hd-des-left G-fx-cc">
-          <span class="article-group G-fx-cc">选购商品</span>
-          <span class="article-name">刘晨</span>
-          <span class="article-time">2019-10-24  19:15:15</span>
+          <span class="article-group G-fx-cc">{{routeData.interest_name}}</span>
+          <span class="article-name">{{routeData.author}}</span>
+          <span class="article-time">{{routeData.date}}</span>
         </div>
         <p class="hd-des-right">
-          <span class="article-views G-Fsize-12">50</span>
+          <span class="article-views G-Fsize-12">{{routeData.number != undefined ? routeData.number : 0}}</span>
           <span class="G-Fsize-12 G-color-999">人浏览</span>
         </p>
       </div>
@@ -31,12 +31,7 @@ import { showPopup,shareMessage,exchangeEl } from "@/utils/index.js";
 export default {
   onLoad() {
     this.routeData = this.$root.$mp.query;
-    this.id = this.$root.$mp.query.id || 0;
-    this.initData();
-    if(this.routeData.cid) {
-      shareMessage(this.routeData)
-    }
-
+    this.initData(this.routeData.id)
   },
   components: {},
   data() {
@@ -59,8 +54,7 @@ export default {
   },
   computed: {
     articleDes() {
-      this.desData.content = "你好我是啊啊"
-      let prefix = this.desData.content.replace(
+      let prefix = this.routeData.details.replace(
         /\<img src="\//gmi,
         '<img src="'+configData.hostImg
       );
@@ -68,6 +62,16 @@ export default {
     }
   },
   methods: {
+      initData(id){
+      let params = {
+            url: 'get/info/details',
+            data: {id:id}
+        }
+        post(params).then(res => {
+          console.log(res,"REs")
+          this.routeData = res.data[0];
+        })
+    },
     //路由
     setRouter(path, id, n, t, s) {
       this.$router.push({

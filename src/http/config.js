@@ -26,11 +26,6 @@ export const getFly = function getFly(showLoading = false) {
     // fly.config.headers={xx:5,bb:6,dd:7}
     //添加请求拦截器
     //添加请求拦截器
-    if (store.state.Tokens.token.length == 0 && !isGetToken) {
-        isGetToken = true
-        fly.lock();
-        getToken()
-    }
     fly.interceptors.request.use((request) => {
             //给所有请求添加自定义header
             if (showLoading) {
@@ -39,12 +34,7 @@ export const getFly = function getFly(showLoading = false) {
                 });
             }
             request.headers["appid"] = appid;
-            if (store.state.Tokens) {
-                request.headers["token"] = store.state.Tokens.token;
-                request.headers["openid"] = store.state.Tokens.openid;
-                request.headers["userId"] = store.state.Tokens.user_id;
-                request.headers["siteId"] = store.state.CityDefaults.id;
-            }
+
             //可以显式返回request, 也可以不返回，没有返回值时拦截器中默认返回request
             return request;
         })

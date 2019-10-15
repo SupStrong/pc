@@ -15,7 +15,7 @@
       <div class="bg-fff tip-list fl-row-justy">
           <div class="item">
               <img class="home-icon fl-column-center" src="http://n.sinaimg.cn/news/transform/700/w1000h500/20190905/6c5f-ieftthx1425370.jpg" alt="">
-              <span>赚零花钱</span>
+              <span>赚零花钱1000</span>
           </div>
           <div class="item">
               <img class="home-icon fl-column-center" src="http://n.sinaimg.cn/photo/transform/700/w1000h500/20190903/85f9-ieaiqii5789841.jpg" alt="">
@@ -30,7 +30,7 @@
               <span>虚拟资源</span>
           </div>
       </div>
-      <div class="hot-goods G-Mb-10" v-if="hotGoods.length !=0"> 
+      <div class="hot-goods G-Mb-10"> 
           <div class="title fl-row-leftNowrap">
             <div class="text">每日任务</div>
           </div>
@@ -108,7 +108,7 @@ import { mapState, mapMutations } from "vuex";
 import { getUrlHistory,sendFormId,showPopup,exchangeEl  } from "@/utils/index.js";
 export default {
   onLoad(res) {
-
+      this.getBanner();
   },
   components: {
   },
@@ -124,6 +124,17 @@ export default {
     };
   },
   methods:{
+    getBanner() {
+        let params = {
+            url: 'get/index/banner',
+            data: {}
+        }
+        get(params).then(res => {
+            this.banner = res.data[0].image;
+            console.log(this.banner)
+        })
+    },
+
     swiperChange: function (e) {
       this.currentSwiper= e.mp.detail.current
     },
