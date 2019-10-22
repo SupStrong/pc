@@ -1,16 +1,31 @@
 <template>
   <div class="content">
+      <div class="page-banner" v-if="banner.length != 0">
+      <swiper :autoplay="true" :interval="2000" :circular="true"
+        @change="swiperChange" :current="currentSwiper">
+        <div v-for="(item,index) in banner" :key="index">
+          <swiper-item>
+            <img :src="item" alt="">
+          </swiper-item>
+        </div>
+      </swiper>
+      <div class="dots fl-row-right"> 
+        <div v-for="(item,index) in banner" :key="index"> 
+          <view class="dot" :class="index == currentSwiper ? 'active' : ''"></view> 
+        </div> 
+      </div>
+    </div>
     <div class="search">
       <div class="search-main">
-          <input type="text" v-model="searchText" placeholder="搜索您需要的品牌名" confirm-type='search'  @confirm="confirm($event)" @focus="searchChanges" @input="searchChanges" class="search-inp">
-          <i @click.stop="closeSearch" v-if="searchChange" class="iconfont iconshanchu"></i>
+          <input type="text" v-model="searchText" placeholder="搜索您需要的品牌名" confirm-type='search'  @confirm="confirm($event)" class="search-inp">
+          <i class="iconfont icon-sousuo" @click="setRouter('/pages/goods/list/main',searchText,0)"></i>
       </div>
     </div>
       <view class="container">
         <!--左侧栏-->
         <view class="nav_left">
-          <block v-for="(item,index) of cateItems" :key="index">
-            <view class="nav_left_items G-fx-cc" :class="[curIndex == index ? 'active' : '']" @click="switchRightTab(index)">{{item.title}}</view>
+          <block v-for="(item,idx) of cateItems" :key="idx">
+            <view :class="['nav_left_items','G-fx-cc',cur.curIndex == idx ? 'active' : '']" @click="getCouponChide(item.previd,idx)">{{item.name}}</view>
           </block>
         </view>
         <!--右侧栏-->
@@ -19,11 +34,11 @@
           <div class="listBrand">
               <div
                 class="brand"
-                v-for="(item,index) in cateItems[curIndex].children"
+                v-for="(item,index) in cateItemsData"
                 :key="index"
-                @click="setRouter('/pages/goods/list/main',item.id)"
+                @click="setRouter('/pages/goods/list/main',item.chideid,1)"
               >
-                <img class="img" :src="item.logo" alt>
+                <img class="img" :src="item.image" alt>
                 <div class="brandName G-one-cloum">{{item.name}}</div>
               </div>
           </div>
@@ -38,91 +53,58 @@ import { mapState, mapMutations } from "vuex";
 import { getUrlHistory,sendFormId,showPopup,exchangeEl  } from "@/utils/index.js";
 export default {
   onLoad(res) {
-
+    this.getBanner();
+    this.getCouponPrev();
+    this.getCouponChide(1);
   },
   components: {
   },
   data() {
     return {
-      cateItems :[   
-      {id:"1",title:'小狗',children:[
-         {logo:'https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=3647170051,871438825&fm=26&gp=0.jpg',name:"狗大脸"},
-         {logo:'https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=3647170051,871438825&fm=26&gp=0.jpg',name:"狗大脸"},
-         {logo:'https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=3647170051,871438825&fm=26&gp=0.jpg',name:"狗大脸"},
-         {logo:'https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=3647170051,871438825&fm=26&gp=0.jpg',name:"狗大脸"},
-         {logo:'https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=3647170051,871438825&fm=26&gp=0.jpg',name:"狗大脸"},
-         {logo:'https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=3647170051,871438825&fm=26&gp=0.jpg',name:"狗大脸"},
-         {logo:'https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=3647170051,871438825&fm=26&gp=0.jpg',name:"狗大脸"},
-         {logo:'https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=3647170051,871438825&fm=26&gp=0.jpg',name:"狗大脸"},
-         {logo:'https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=3647170051,871438825&fm=26&gp=0.jpg',name:"狗大脸"},
-         {logo:'https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=3647170051,871438825&fm=26&gp=0.jpg',name:"狗大脸"},
-         {logo:'https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=3647170051,871438825&fm=26&gp=0.jpg',name:"狗大脸"},
-         {logo:'https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=3647170051,871438825&fm=26&gp=0.jpg',name:"狗大脸"},
-         {logo:'https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=3647170051,871438825&fm=26&gp=0.jpg',name:"狗大脸"},
-         {logo:'https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=3647170051,871438825&fm=26&gp=0.jpg',name:"狗大脸"},
-         {logo:'https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=3647170051,871438825&fm=26&gp=0.jpg',name:"狗大脸"},
-         {logo:'https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=3647170051,871438825&fm=26&gp=0.jpg',name:"狗大脸"},
-         {logo:'https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=3647170051,871438825&fm=26&gp=0.jpg',name:"狗大脸"},
-         {logo:'https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=3647170051,871438825&fm=26&gp=0.jpg',name:"狗大脸"},
-         {logo:'https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=3647170051,871438825&fm=26&gp=0.jpg',name:"狗大脸"},
-         {logo:'https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=3647170051,871438825&fm=26&gp=0.jpg',name:"狗大脸"},
-         {logo:'https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=3647170051,871438825&fm=26&gp=0.jpg',name:"狗大脸"},
-         {logo:'https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=3647170051,871438825&fm=26&gp=0.jpg',name:"狗大脸"},
-         {logo:'https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=3647170051,871438825&fm=26&gp=0.jpg',name:"狗大脸"},
-         {logo:'https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=3647170051,871438825&fm=26&gp=0.jpg',name:"狗大脸"},
-         {logo:'https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=3647170051,871438825&fm=26&gp=0.jpg',name:"狗大脸"},
-         {logo:'https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=3647170051,871438825&fm=26&gp=0.jpg',name:"狗大脸"},
-         {logo:'https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=3647170051,871438825&fm=26&gp=0.jpg',name:"狗大脸"},
-         {logo:'https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=3647170051,871438825&fm=26&gp=0.jpg',name:"狗大脸"},
-         {logo:'https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=3647170051,871438825&fm=26&gp=0.jpg',name:"狗大脸"},
-         {logo:'https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=3647170051,871438825&fm=26&gp=0.jpg',name:"狗大脸"},
-         {logo:'https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=3647170051,871438825&fm=26&gp=0.jpg',name:"狗大脸"},
-         {logo:'https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=3647170051,871438825&fm=26&gp=0.jpg',name:"狗大脸"},
-         {logo:'https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=3647170051,871438825&fm=26&gp=0.jpg',name:"狗大脸"},
-         {logo:'https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=3647170051,871438825&fm=26&gp=0.jpg',name:"狗大脸"},
-         {logo:'https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=3647170051,871438825&fm=26&gp=0.jpg',name:"狗大脸"},
-         {logo:'https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=3647170051,871438825&fm=26&gp=0.jpg',name:"狗大脸"},
-         {logo:'https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=3647170051,871438825&fm=26&gp=0.jpg',name:"狗大脸"},
-         {logo:'https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=3647170051,871438825&fm=26&gp=0.jpg',name:"狗大脸"},
-         {logo:'https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=3647170051,871438825&fm=26&gp=0.jpg',name:"狗大脸"},
-         {logo:'https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=3647170051,871438825&fm=26&gp=0.jpg',name:"狗大脸"},
-         {logo:'https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=3647170051,871438825&fm=26&gp=0.jpg',name:"狗大脸"},
-         {logo:'https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=3647170051,871438825&fm=26&gp=0.jpg',name:"狗大脸"},
-         {logo:'https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=3647170051,871438825&fm=26&gp=0.jpg',name:"狗大脸"},
-         {logo:'https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=3647170051,871438825&fm=26&gp=0.jpg',name:"狗大脸"},
-         {logo:'https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=3647170051,871438825&fm=26&gp=0.jpg',name:"狗大脸"},
-         {logo:'https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=3647170051,871438825&fm=26&gp=0.jpg',name:"狗大脸"},
-         {logo:'https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=3647170051,871438825&fm=26&gp=0.jpg',name:"狗大脸"},
-         {logo:'https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=3647170051,871438825&fm=26&gp=0.jpg',name:"狗大脸"},
-         {logo:'https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=3647170051,871438825&fm=26&gp=0.jpg',name:"狗大脸"},
-         {logo:'https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=3647170051,871438825&fm=26&gp=0.jpg',name:"狗大脸"},
-         {logo:'https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=3647170051,871438825&fm=26&gp=0.jpg',name:"狗大脸"},
-         {logo:'https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=3647170051,871438825&fm=26&gp=0.jpg',name:"狗大脸"},
-         {logo:'https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=3647170051,871438825&fm=26&gp=0.jpg',name:"狗大脸"},
-         {logo:'https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=3647170051,871438825&fm=26&gp=0.jpg',name:"狗大脸"},
-         {logo:'https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=3647170051,871438825&fm=26&gp=0.jpg',name:"狗大脸"},
-         {logo:'https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=3647170051,871438825&fm=26&gp=0.jpg',name:"狗大脸"},
-         {logo:'https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=3647170051,871438825&fm=26&gp=0.jpg',name:"狗大脸"}
-      ]},
-      {id:"2",title:'小猫',children:[
-        {logo:'https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=3389412202,3441609535&fm=26&gp=0.jpg',name:"猫小脸"}
-      ]},
-      {id:"3",title:'小猪',children:[
-        {logo:'https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=4135477902,3355939884&fm=26&gp=0.jpg',name:"猪圆脸"}
-      ]},
-      {id:"4",title:'小羊',children:[
-        {logo:'https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=1176078931,2627391218&fm=26&gp=0.jpg',name:"羊尖脸"}         
-      ]}],
-      curIndex:0,
+      cur:{
+        curIndex: 0 
+      },
+      banner:[],
+      currentSwiper:0,
+      cateItems :[],
+      cateItemsData :[],
     };
   },
   methods:{
-    switchRightTab: function (index) {
-      index = parseInt(index);
-      this.curIndex = index;
+    swiperChange: function (e) {
+      this.currentSwiper = e.mp.detail.current
     },
-    setRouter (path,id){
-        this.$router.push({ path: path, query: {storeId:this.storeId,id:id,guide_id:this.guideId} })
+      getBanner() {
+        let params = {
+            url: 'get/coupon/banner',
+            data: {}
+        }
+        get(params).then(res => {
+            this.banner = res.data[0].image;
+        })
+    },
+    getCouponPrev() {
+        let params = {
+            url: 'get/coupon/prev',
+            data: {}
+        }
+        get(params).then(res => {
+            this.cateItems = res.data;
+        })
+    },
+    getCouponChide(id,index) {
+      index = parseInt(index);
+      this.cur.curIndex = index;
+        let params = {
+            url: 'get/coupon/chide',
+            data: {id:id}
+        }
+        post(params).then(res => {
+          this.cateItemsData = res.data;
+        })
+    },
+    setRouter (path,id,type){
+        this.$router.push({ path: path, query: {id:id,type:type} })
     },
   },
   watch: {}
@@ -314,6 +296,46 @@ export default {
   align-items: center;
   font-size: 0.16rem;
   margin-top: 0.6rem;
+}
+//------------------------------
+.page-banner {
+    width: 100%;
+    height: 1.83rem;
+    border-radius: .04rem .04rem 0px 0px;
+    overflow: hidden;
+    position: relative;
+    swiper {
+        height: 100%;
+    }
+    image {
+        width: 100%;
+        height: 100%;
+        display: block;
+        border-radius: .04rem .04rem 0px 0px;
+    }
+}
+.dots {
+    width: 100%;
+    padding-right: 0.04rem;
+    position: absolute;
+    right: 0;
+    bottom: .1rem;
+    left: 0;
+    z-indeX: 5;
+}
+/*未选中时的小圆点样式 */
+.dot {
+    width: .06rem;
+    height: .06rem;
+    background: rgba(255, 255, 255, 1);
+    opacity: 0.5;
+    border-radius: 50%;
+    margin-right: .06rem;
+}
+/*选中以后的小圆点样式 */
+.dot.active {
+    background: rgba(243, 110, 32, 1);
+    opacity: 1;
 }
 
 </style>

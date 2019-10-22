@@ -13,34 +13,34 @@
           duration="300"
           :circular="true"
         >
-          <block v-for="(item, index) in goodsData.imgs" :key="index">
-            <swiper-item @click="previewImage(goodsData.imgs,item)">
+          <block v-for="(item, index) in goodsData.image" :key="index">
+            <swiper-item @click="previewImage(goodsData.image,item)">
               <image :src="item" class="slide-image">
               </image>
             </swiper-item>
           </block>
         </swiper>
         <div class="imgs_num">
-          <span class="a">{{goodsData.imgs.length==0?"0":current+1}}</span>
-          <span class="b">/{{goodsData.imgs.length}}</span>
+          <span class="a">{{goodsData.image.length==0?"0":current+1}}</span>
+          <span class="b">/{{goodsData.image.length}}</span>
         </div>
       </div>
       <div class="goods-bd G-Plr-15">
         <div class="fl-row-justy top">
-          <h2 class="goods-name G-more-cloum G-col-2">{{goodsData.name}}</h2>
-          <div class="share-content fl-column-center" @click="operate.recommend = true">
+          <h2 class="goods-name G-more-cloum G-col-2">{{goodsData.title}}</h2>
+          <div class="share-content fl-column-center">
             <i class="iconfont icon-fenxiang"></i>
             <p>分享</p>
           </div>
         </div>
-        <div v-if="goodsData.title!=''" class="promotion-text G-more-cloum G-col-2">{{goodsData.title}}</div>
+        <div v-if="goodsData.info!=''" class="promotion-text G-more-cloum G-col-3">{{goodsData.info}}</div>
         <div class="goods-money fl-row-justy">
           <div class="money fl-row-left-base">
-            <span>￥{{goodsData.price}}</span>
-            <span>￥{{goodsData.market}}</span>
+            <span>￥{{goodsData.present_price}}</span>
+            <span>￥{{goodsData.original_price}}</span>
           </div>
           <div class="coupon">
-            <p>点击领取<i>30</i>元优惠券</p>
+            <p @click="clickCoupon(goodsData.command)">点击领取<i>{{goodsData.discount_price}}</i>元优惠券</p>
           </div>
         </div>
       </div>
@@ -48,10 +48,7 @@
         <div class="goods-tem-top G-Plr-15 fl-row-justy">
           <p class="title">商品介绍</p>
         </div>
-        <div class="goods-assist-temp G-bg-white" v-if="goodsDes==''">
-            <p>抱歉，暂无信息</p>
-        </div> 
-        <div class="G-bg-white" v-else v-html="goodsDes">
+        <div class="G-bg-white" v-html="articleDes">
         </div>
       </div>
     </div>
@@ -69,32 +66,50 @@ export default {
     return {
       current: 0, 
       goodsData:{
-        imgs:["https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=3647170051,871438825&fm=26&gp=0.jpg",
-              "https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=682682990,2713486518&fm=26&gp=0.jpg",
-              "https://ss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=3444508248,1197396609&fm=26&gp=0.jpg",
-             ],
-        name:"百度图片百度图片百度图片百度图片百度图片百度图片百度图片百度图片百度图片百度图片百度图片百度图片百度图片百度图片百度图片百度图片百度图片百度图片百度图片百度图片百度图片百度图片百度图片百度图片百度图片百度图片百度图片百度图片百度图片百度图片百度图片百度图片",
-        title:"百度图片百度图片百度图片百度图片百度图片百度图片百度图片百度图片",
-        price:"100",
-        market:"1000",
-        desc:"<img src='https://ss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=3444508248,1197396609&fm=26&gp=0.jpg'><img style='min-width:3.45rem' src='https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=682682990,2713486518&fm=26&gp=0.jpg'>"
+        image:[],
+        details:null
       }
     };
   },
   onLoad(res) {
+    this.routeData = this.$root.$mp.query;
+    this.getCouponDetails(this.routeData.id);
   },
   onShow(){
-    this.operate.recommend = false;
+    // this.operate.recommend = false;
   },
   methods: {
     ...mapMutations([
       "setmallCityDefaults",
     ]),
+    getCouponDetails(id){
+      let params = {
+            url: 'get/coupon/onedetails',
+            data: {id:id}
+        }
+        post(params).then(res => {
+          this.goodsData = res.data[0];
+        })
+    },
     currentChange(e) {
       this.current = e.mp.detail.current;
     },
     previewImage(imgs,src) {
       previewImage(src,imgs);
+    },
+    clickCoupon(text){
+      wx.setClipboardData({
+        data: text,
+        success: function (res) {
+          wx.getClipboardData({
+            success: function (res) {
+              wx.showToast({
+              title: '已复制淘口令'
+            })
+            }
+          })
+        }
+      })
     },
     setRouter(path, id) {
       this.$router.push({
@@ -107,14 +122,18 @@ export default {
   },
   computed:{
     ...mapState({
-      iphoneModel: state => state.iphoneModel,
     }),
     imgUrl(){
       return configData.hostImg + 'minipro/mall/yd.png'
     },
-    goodsDes() {
-      let string = this.goodsData.desc;
-      return exchangeEl(string)
+    articleDes() {
+      if(this.goodsData.details != null){
+        let prefix = this.goodsData.details.replace(
+          /\<img src="\//gmi,
+          '<img src="'+configData.hostImg
+        );
+        return exchangeEl(prefix)
+      }
     }
   },
 };
@@ -200,7 +219,6 @@ export default {
     color: #81838e;
     font-size: 0.12rem;
     line-height: 1.3;
-    max-height: 0.28rem;
     margin-bottom: 0.15rem;
   }
   .goods-money {
@@ -239,6 +257,9 @@ export default {
 }
 .comment{
   margin-top: 0.1rem;
+  height:auto;
+  background:#fff;
+  padding: 0 .1rem;
 }
 .goods-tem-top {
   height: 0.44rem;

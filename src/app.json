@@ -3,10 +3,11 @@
         "pages/index/main",
         "pages/original/main",
         "pages/original-details/main",
-        "pages/resources/main", 
         "pages/goods/list/main",       
         "pages/goods/details/main",
-        "pages/brand/main"
+        "pages/brand/main",
+        "pages/resources/main", 
+        "pages/resoures-details/main"
     ],
     "window": {
         "backgroundTextStyle": "light",

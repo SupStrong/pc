@@ -1,15 +1,16 @@
 <template>
+    <!--banner end -->
     <div class="goods-ul">
-      <div class="li" v-for="(item,index) in goods" :key="index"
-      @click="setRouter('/pages/goods/details/main',item.id)">
+      <div class="li" v-for="(item,index) in cateItemsData" :key="index"
+      @click="setRouter('/pages/goods/details/main',item._id)">
         <div class="img-box">
-          <img :src="item.cover" alt="">
+          <img :src="item.image[0]" alt="">
         </div>
         <div class="bom">
-          <div class="sku-name G-more-cloum G-col-2">{{item.sku_name}}</div>
+          <div class="sku-name G-more-cloum G-col-2">{{item.title}}</div>
           <div class="price">
-            <span class="G-Fsize-16 G-color-f13a">￥{{item.price}}</span>
-            <span class="market current-market" v-if="item.market">30元优惠券</span>
+            <span class="G-Fsize-16 G-color-f13a">￥{{item.present_price}}</span>
+            <span class="market current-market" v-if="item.discount_price">{{item.discount_price}}元优惠券</span>
           </div>
         </div>
       </div>
@@ -22,22 +23,60 @@ import { mapState, mapMutations } from "vuex";
 import { previewImage,showPopup } from '@/utils/index';
 export default {
   onLoad() {
+    // 传值 0搜索 1列表
+    this.cateItemsData = [];
+    this.routeData = this.$root.$mp.query;
+    this.routeData.type==1 ? this.getCouponChidelist(this.routeData.id) : this.getSearchChidelist(this.routeData.id);
   },
   components: {},
   data() {
     return {
-      goods:[
-      {cover:'https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=2174909441,2495215020&fm=26&gp=0.jpg',sku_name:'你好你好你好你好你好你好你好你好你好你好你好',price:'1000',market:'100'},
-      {cover:'https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=2174909441,2495215020&fm=26&gp=0.jpg',sku_name:'hello',price:'1000',market:'100'},
-      {cover:'https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=2174909441,2495215020&fm=26&gp=0.jpg',sku_name:'hello',price:'1000.10',market:'100.10'}]
+      cateItemsData:[],
+      page:1
     };
   },
   computed: {},
   methods: {
+    swiperChange: function (e) {
+      this.banner.currentSwiper = e.mp.detail.current
+    },
+    getCouponChidelist(id) {
+        let params = {
+            url: 'get/coupon/chidelist',
+            data: {id:id,page:this.page,rows:6}
+        }
+        post(params).then(res => {
+          this.page = res.page;
+          this.cateItemsData = [...this.cateItemsData,...res.data];
+
+        })
+    },
+    getSearchChidelist(text){
+        let params = {
+            url: 'get/search/chidelist',
+            data: {title:text,page:this.page,rows:6}
+        }
+        post(params).then(res => {
+          this.page = res.page;
+          this.cateItemsData = [...this.cateItemsData,...res.data];
+        })
+    },
+    
     setRouter (path,id){
-        this.$router.push({ path: path, query: {} })
+        this.$router.push({ path: path, query: {id:id}})
     },
 
+  },
+  onReachBottom() {
+    if (this.page == 0) {
+      //加载完成
+      return false;
+    }
+    if(this.routeData.type == 1){
+        this.getCouponChidelist(this.routeData.id)
+    }else{
+        this.getSearchChidelist(this.routeData.id)
+    }
   },
   watch: {}
 };
@@ -106,4 +145,44 @@ export default {
     margin-left:0.05rem;
   }
 }
+.page-banner {
+    width: 100%;
+    height: 1.83rem;
+    border-radius: .04rem .04rem 0px 0px;
+    overflow: hidden;
+    position: relative;
+    swiper {
+        height: 100%;
+    }
+    image {
+        width: 100%;
+        height: 100%;
+        display: block;
+        border-radius: .04rem .04rem 0px 0px;
+    }
+}
+.dots {
+    width: 100%;
+    padding-right: 0.04rem;
+    position: absolute;
+    right: 0;
+    bottom: .1rem;
+    left: 0;
+    z-indeX: 5;
+}
+/*未选中时的小圆点样式 */
+.dot {
+    width: .06rem;
+    height: .06rem;
+    background: rgba(255, 255, 255, 1);
+    opacity: 0.5;
+    border-radius: 50%;
+    margin-right: .06rem;
+}
+/*选中以后的小圆点样式 */
+.dot.active {
+    background: rgba(243, 110, 32, 1);
+    opacity: 1;
+}
+
 </style>

@@ -8,8 +8,7 @@
           <span class="article-time">{{routeData.date}}</span>
         </div>
         <p class="hd-des-right">
-          <span class="article-views G-Fsize-12">{{routeData.number != undefined ? routeData.number : 0}}</span>
-          <span class="G-Fsize-12 G-color-999">人浏览</span>
+          <span class="article-views G-Fsize-12">{{routeData.fabulous}}人浏览</span>
         </p>
       </div>
     </div>
@@ -27,7 +26,9 @@ import { showPopup,shareMessage,exchangeEl } from "@/utils/index.js";
 export default {
   onLoad() {
     this.routeData = this.$root.$mp.query;
-    this.updateinitData(this.routeData.id);
+    // this.updateinitData(this.routeData.id);
+    this.initData(this.routeData.id);
+    
   },
   onshow(){
   },
@@ -35,7 +36,19 @@ export default {
   data() {
     return {
       id: 0,
-      routeData:{details:null}
+      routeData:{details:null},
+      isTop: false,
+      desData: {
+        title: "",
+        name: "",
+        content: "",
+        views: "",
+        created_at: "",
+        group_name: "",
+        tags: [],
+        top: "",
+        remark: ""
+      }
     };
   },
   computed: {
@@ -52,7 +65,7 @@ export default {
   methods: {
     initData(id){
         let params = {
-            url: 'get/info/details',
+            url: 'get/resouces/details',
             data: {id:id}
         }
         post(params).then(res => {
@@ -60,15 +73,15 @@ export default {
         })
     },
     // 更新
-    updateinitData(id){
-      let params = {
-          url: 'update/details/number',
-          data: {id:id}
-      }
-      post(params).then(res => {
-          this.initData(this.routeData.id);
-      })
-    },
+    // updateinitData(id){
+    //   let params = {
+    //       url: 'update/details/number',
+    //       data: {id:id}
+    //   }
+    //   post(params).then(res => {
+    //       this.initData(this.routeData.id);
+    //   })
+    // },
     //路由
     setRouter(path, id, n, t, s) {
       this.$router.push({
@@ -105,7 +118,6 @@ $orange: #f36e20;
     .article-name {
       font-size: 0.12rem;
       color: #999;
-      margin-left: 0.1rem;
     }
     .article-time {
       font-size: 0.12rem;

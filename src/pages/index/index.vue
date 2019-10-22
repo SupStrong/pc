@@ -36,65 +36,31 @@
           </div>
           <div class="main">
               <div class="kitchen-main">
-                <div class="main_list" flex="main:justify">
+                <div class="main_list" v-for="(item,index) of goodResouce" :key="index" flex="main:justify" @click="setRouter('/pages/original-details/main',item._id)">
                     <div class="main_list_image">
-                        <img src="https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=3647170051,871438825&fm=26&gp=0.jpg" alt="">
+                        <img :src="item.image[0]" alt="">
                     </div>
                     <div class="main_list_info">
                         <div class="text">
-                            <span>地中海风格的厨卫家电系统解决方案地中海风格的厨卫家电系统解决方案地中海风格的厨卫家电系统解决方案</span>
+                            <span>{{item.title}}</span>
                         </div>
-
                         <div class="price" flex="dir:left">
-                              <p class="price_info">学习交流</p>
-                              <p class="iconShow"><i class="iconfont icon-iconset0207"></i><span>100</span></p>
+                              <p class="price_info">{{item.interest_name}}</p>
+                              <p class="iconShow"><i class="iconfont icon-iconset0207"></i><span>{{item.number}}</span></p>
                         </div>
                     </div>
-                </div>
-                <div class="main_list" flex="main:justify">
-                    <div class="main_list_image">
-                        <img src="https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=3647170051,871438825&fm=26&gp=0.jpg" alt="">
-                    </div>
-                    <div class="main_list_info">
-                        <div class="text">
-                            <span>地中海风格的厨卫家电系统解决方案地中海风格的厨卫家电系统解决方案地中海风格的厨卫家电系统解决方案</span>
-                        </div>
-
-                        <div class="price" flex="dir:left">
-                              <p class="price_info">网赚项目</p>
-                              <p class="iconShow"><i class="iconfont icon-iconset0207"></i><span>100</span></p>                              
-                        </div>
-                    </div>
-                </div>
-                <div class="main_list" flex="main:justify">
-                    <div class="main_list_image">
-                        <img src="https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=3647170051,871438825&fm=26&gp=0.jpg" alt="">
-                    </div>
-                    <div class="main_list_info">
-                        <div class="text">
-                            <span>地中海风格的厨卫家电系统解决方案地中海风格的厨卫家电系统解决方案地中海风格的厨卫家电系统解决方案</span>
-                        </div>
-
-                        <div class="price" flex="dir:left">
-                              <p class="price_info">优惠券</p>
-                              <p class="iconShow"><i class="iconfont icon-iconset0207"></i><span>100</span></p>                              
-                        </div>
-                    </div>
-                </div>
+                </div> 
             </div>
           </div>
       </div>
       <div class="hot-goods">
         <div class="hot-day">
             <div class="title fl-row-leftNowrap">
-            <div class="text">今日头条</div>
+            <div class="text">今日爆品</div>
           </div>
             <div class="hotday-cont">
                 <ul>
-                    <li><i>1</i>.<a href="http://weixin.cw100.com/wiki/show/416" class="external">二次装修只因橱柜没选好，选橱柜只看外观，...</a></li>
-                    <li><i>2</i>.<a href="https://www.toutiao.com/i6700801129749414411" class="external">纯干货丨洗碗机选购指南，不搞懂这些千万别...</a></li>
-                    <li><i>3</i>.<a href="http://weixin.cw100.com/wiki/show/251" class="external">净水器品牌鱼龙混杂，如何知道净水器品牌靠...</a></li>
-                    <li><i>4</i>.<a href="http://weixin.cw100.com/wiki/show/250" class="external">浴霸的安装注意事项，不要忽略头顶上的危险</a></li>
+                    <li v-for="(item,index) of goodList" :key="index"><i>{{index + 1}}</i>.<a>{{item.title}}</a></li>
                 </ul>
             </div>
         </div>
@@ -109,12 +75,16 @@ import { getUrlHistory,sendFormId,showPopup,exchangeEl  } from "@/utils/index.js
 export default {
   onLoad(res) {
       this.getBanner();
+      this.getResouce();
+      this.getGood();
   },
   components: {
   },
   data() {
     return {
       currentSwiper:0,
+      goodList:[],
+      goodResouce:[],
       banner:[
         "http://n.sinaimg.cn/news/transform/700/w1000h500/20190905/6c5f-ieftthx1425370.jpg",
         "http://n.sinaimg.cn/photo/transform/700/w1000h500/20190903/85f9-ieaiqii5789841.jpg",
@@ -131,13 +101,35 @@ export default {
         }
         get(params).then(res => {
             this.banner = res.data[0].image;
-            console.log(this.banner)
         })
     },
-
+    getResouce(){
+        let params = {
+            url: 'get/home/resouce',
+            data: {}
+        }
+        post(params).then(res => {
+            this.goodResouce = res.data;
+        })    
+    },
+    getGood(){
+        let params = {
+            url: 'get/hot/goods',
+            data: {}
+        }
+        post(params).then(res => {
+            this.goodList = res.data;
+        })
+    },
     swiperChange: function (e) {
       this.currentSwiper= e.mp.detail.current
     },
+    setRouter(path, id, n, t, s) {
+      this.$router.push({
+        path: path,
+        query: { id: id}
+      });
+    }
   },
   watch: {}
 };

@@ -29,19 +29,19 @@ const infoClass = new mongoose.Schema({
 // 优惠券父级分类
 const couponPrev = new mongoose.Schema({
     name: String,
-    prev_id: String
+    previd: String
 })
 // 优惠券父级分类
 const couponChide = new mongoose.Schema({
-    prev_id: String,
+    previd: String,
     name: String,
-    chide_id: String
+    chideid: String
 })
 // 优惠券详情
 const couponDetails = new mongoose.Schema({
-    prev_id: String,
+    previd: String,
     prev_name: String,
-    chide_id: String,
+    chideid: String,
     chide_name: String,
     title:String,
     info:String,
@@ -51,6 +51,9 @@ const couponDetails = new mongoose.Schema({
     discount_price: String,
     date: String,
     details: String,
+})
+const couponImage = new mongoose.Schema({
+    image: Array
 })
 /************** 定义模型Model **************/
 // const Models = {
@@ -69,6 +72,8 @@ const Models = {
     couChide: mongoose.model('couChide', couponChide),
     // 优惠券详情
     couDetails: mongoose.model('couDetails', couponDetails),
+    // 优惠券广告位
+    couponImg: mongoose.model('couponImg', couponImage),
 }
 
 module.exports = Models;

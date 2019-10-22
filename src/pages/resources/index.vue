@@ -30,59 +30,19 @@
     <div class="search">
       <div class="search-main">
           <input type="text" v-model="searchText" placeholder="搜索您需要的资源名" confirm-type='search'  @confirm="confirm($event)" @focus="searchChanges" @input="searchChanges" class="search-inp">
-          <i @click.stop="closeSearch" v-if="searchChange" class="iconfont iconshanchu"></i>
+          <i class="iconfont icon-sousuo" @click="searchListFun(searchText)"></i>
       </div>
     </div>
     <ul class="commodity-list commoditys">
-        <li>
-            <img src="http://weixin.cw100.com/storage/admin/1/2019/02/18/1550458013_5c6a1c9d0a527.jpg" alt="">
+        <li v-for="(item,index) in listData" :key="index" @click="setRouter('/pages/resoures-details/main',item._id)">
+             <img :src="item.image[0]" alt="">
             <div class="commodity-attribute" style="width:500rpx">
                 <div class="commodity-title">
-                    <p class="title">Electrolux/伊莱克斯伊莱克斯伊莱克斯伊莱克斯伊莱克斯</p>
-                    <p class="det"></p>
+                    <p class="title">{{item.title}}</p>
                 </div>
                 <div class="price-num">
                       <i class="iconfont icon-shijian active"></i>
-                      <div class="price">2019-01-12</div>
-                  </div>
-            </div>
-        </li>
-        <li>
-            <img src="http://weixin.cw100.com/storage/admin/1/2019/02/18/1550458013_5c6a1c9d0a527.jpg" alt="">
-            <div class="commodity-attribute" style="width:500rpx">
-                <div class="commodity-title">
-                    <p class="title">Electrolux/伊莱克斯伊莱克斯伊莱克斯伊莱克斯伊莱克斯</p>
-                    <p class="det"></p>
-                </div>
-                <div class="price-num">
-                      <i class="iconfont icon-shijian active"></i>
-                      <div class="price">2019-01-12</div>
-                  </div>
-            </div>
-        </li>
-        <li>
-            <img src="http://weixin.cw100.com/storage/admin/1/2019/02/18/1550458013_5c6a1c9d0a527.jpg" alt="">
-            <div class="commodity-attribute" style="width:500rpx">
-                <div class="commodity-title">
-                    <p class="title">Electrolux/伊莱克斯伊莱克斯伊莱克斯伊莱克斯伊莱克斯</p>
-                    <p class="det"></p>
-                </div>
-                <div class="price-num">
-                      <i class="iconfont icon-shijian active"></i>
-                      <div class="price">2019-01-12</div>
-                  </div>
-            </div>
-        </li>
-        <li>
-            <img src="http://weixin.cw100.com/storage/admin/1/2019/02/18/1550458013_5c6a1c9d0a527.jpg" alt="">
-            <div class="commodity-attribute" style="width:500rpx">
-                <div class="commodity-title">
-                    <p class="title">Electrolux/伊莱克斯伊莱克斯伊莱克斯伊莱克斯伊莱克斯</p>
-                    <p class="det"></p>
-                </div>
-                <div class="price-num">
-                      <i class="iconfont icon-shijian active"></i>
-                      <div class="price">2019-01-12</div>
+                      <div class="price">{{item.date}}</div>
                   </div>
             </div>
         </li>
@@ -98,22 +58,64 @@ import { mapState, mapMutations } from "vuex";
 import { getUrlHistory,sendFormId,showPopup,exchangeEl  } from "@/utils/index.js";
 export default {
   onLoad(res) {
-
+    this.getGroups();
   },
   components: {
   },
   data() {
     return {
+      listData:[],
+      page : 1,
+      getType:'list'
     };
   },
   methods:{
+    getGroups() {
+      let params = {
+            url: 'get/details/list',
+            data: {page:this.page,rows:5}
+        }
+        post(params).then(res => {
+          this.page = res.page;
+          this.listData = [...this.listData,...res.data];
+          this.getType = res.type;
+        })
+    },
     switchRightTab: function (index) {
       index = parseInt(index);
       this.curIndex = index;
     },
-    setRouter (path,id){
-        this.$router.push({ path: path, query: {storeId:this.storeId,id:id,guide_id:this.guideId} })
+    searchListFun(text){
+      this.page = 1;
+      this.listData = [];
+      this.searchList(text);
     },
+    // 搜索
+    searchList(text){
+       let params = {
+            url: 'get/search/resouce',
+            data: {title:text,page:this.page,rows:5}
+        }
+        post(params).then(res => {
+          this.listData = [...this.listData,...res.data];
+          this.page = res.page;
+          this.getType = res.type;
+        })
+    },
+    setRouter(path,id){
+        this.$router.push({ path: path, query: {id:id}})
+    },
+  },
+  onReachBottom() {
+    if (this.page == 0) {
+      //加载完成
+      return false;
+    }
+    if(this.getType =='list'){
+      this.getGroups();
+    }else{
+      this.searchList(this.searchText)
+    }
   },
   watch: {}
 };
@@ -231,15 +233,16 @@ export default {
   }
 }
 .commodity-attribute{
-  width:2.5rem;
+  width:2.7rem!important;
   padding-left:.05rem;
 }
 .commodity-title{
-  overflow: hidden;
+overflow: hidden;
 text-overflow: ellipsis;
 display: -webkit-box;
 -webkit-line-clamp: 2;
 -webkit-box-orient: vertical;
+height:.35rem;
 }
 .price-num{
   display:flex;

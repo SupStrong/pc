@@ -43,16 +43,9 @@ export const getFly = function getFly(showLoading = false) {
         (response) => {
             //只将请求结果的data字段返回
             wx.hideLoading();
-            setTimeout(function() {
-                store.commit('setLodingStatus', true)
-            }, 2000)
-
             return response.data
         },
         (err) => {
-            setTimeout(function() {
-                store.commit('setLodingStatus', true)
-            }, 2000)
             let message = err.response.data.message
             if (message.includes('Token') || message.includes('token')) {
                 store.commit('setTokenStatus', false)

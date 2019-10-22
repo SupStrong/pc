@@ -5,7 +5,7 @@
         <div class="group-frist">
           <scroll-view scroll-x="true" class="group-frist-con">
             <div
-              v-for="(item,index) in Groups" :key="index" @click="getGroups(item.class_id)" class="group-frist-item">
+              v-for="(item,index) in Groups" :key="index" @click="getClicks(item.class_id)" class="group-frist-item">
               <span class="item-name">{{item.name}}</span>
               <span class="item-line"></span>
             </div>
@@ -28,7 +28,7 @@
               </p>
             </div>
           </div>
-          <img :src="item.image" class="item-img">
+          <img :src="item.image[0]" class="item-img">
         </div>
     </div>
   </div>
@@ -39,16 +39,15 @@ import { apiList, configData, getNoLoad, get, post } from "@/http/api.js";
 import { mapState, mapMutations } from "vuex";
 export default {
   onLoad(res) {
-    // this.resetData();
-    // this.getLists();
-    // /get/info/class
     this.getInfoClass();
     this.getGroups(1);
   },
   data() {
     return {
       Groups:[],
-      listData:[]
+      listData:[],
+      page:1,
+      groupInterest:1
     };
   },
   computed: {
@@ -63,17 +62,23 @@ export default {
             this.Groups = res.data;
         })
     },
+    getClicks(id){
+      this.page = 1;
+      this.listData = [];
+      this.getGroups(id);
+    },  
     getGroups(id) {
       let params = {
             url: 'get/info/list',
-            data: {interest:id}
+            data: {interest:id,page:this.page,rows:5}
         }
         post(params).then(res => {
-          this.listData = res.data;
+          this.page = res.page;
+          this.groupInterest = id;
+          this.listData = [...this.listData,...res.data];
         })
     },
     setRouter(path, id, n, t, s) {
-      console.log(path,id)
       this.$router.push({
         path: path,
         query: { id: id}
@@ -81,16 +86,17 @@ export default {
     }
   },
   onReachBottom() {
-    if (this.listSearchData.page == 0) {
+    if (this.page == 0) {
       //加载完成
       return false;
     }
-    this.getLists();
+    this.getGroups(this.groupInterest);
   },
   onPullDownRefresh() {
     wx.showNavigationBarLoading();
-    this.listSearchData.page = 1;
-    this.getListsSel();
+    this.page = 1;
+    this.listData = []
+    this.getGroups(1);
     setTimeout(() => {
       wx.hideNavigationBarLoading();
       wx.stopPullDownRefresh();
