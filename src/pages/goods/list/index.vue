@@ -14,6 +14,9 @@
           </div>
         </div>
       </div>
+      <div class="empty-con fl-row-center" v-if="cateItemsData.length == 0">
+        <span>抱歉，暂无商品信息</span>
+      </div>
     </div>
 </template>
 
@@ -183,6 +186,13 @@ export default {
 .dot.active {
     background: rgba(243, 110, 32, 1);
     opacity: 1;
+}
+.fl-row-center{
+  text-align: center;
+  font-size:16px;
+  color:#999;
+  padding-top:30rpx;
+  width:100%;
 }
 
 </style>

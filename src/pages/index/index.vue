@@ -12,24 +12,6 @@
                 </block>  
             </view>  
       </div>
-      <div class="bg-fff tip-list fl-row-justy">
-          <div class="item">
-              <img class="home-icon fl-column-center" src="http://n.sinaimg.cn/news/transform/700/w1000h500/20190905/6c5f-ieftthx1425370.jpg" alt="">
-              <span>赚零花钱1000</span>
-          </div>
-          <div class="item">
-              <img class="home-icon fl-column-center" src="http://n.sinaimg.cn/photo/transform/700/w1000h500/20190903/85f9-ieaiqii5789841.jpg" alt="">
-              <span>网赚攻略</span>
-          </div>
-          <div class="item">
-              <img class="home-icon fl-column-center" src="http://n.sinaimg.cn/news/700/w1000h500/20190904/f15c-ieaiqii9666581.png" alt="">
-              <span>领优惠券</span>
-          </div>
-          <div class="item">
-              <img class="home-icon fl-column-center" src="http://n.sinaimg.cn/news/transform/700/w1000h500/20190902/8f1d-ieaiqii0044002.jpg" alt="">
-              <span>虚拟资源</span>
-          </div>
-      </div>
       <div class="hot-goods G-Mb-10"> 
           <div class="title fl-row-leftNowrap">
             <div class="text">每日任务</div>
@@ -78,6 +60,9 @@ export default {
       this.getResouce();
       this.getGood();
   },
+  onShow(){
+    // this.checkLocation();    
+  },
   components: {
   },
   data() {
@@ -94,6 +79,21 @@ export default {
     };
   },
   methods:{
+  showSettingToast: function(e) {
+    wx.showModal({
+      title: '提示！',
+      confirmText: '去设置',
+      showCancel: false,
+      content: e,
+      success: function(res) {
+        if (res.confirm) {
+          wx.navigateTo({
+            url: '../setting/setting',
+          })
+        }
+      }
+    })
+  },
     getBanner() {
         let params = {
             url: 'get/index/banner',

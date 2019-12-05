@@ -1,35 +1,8 @@
 <template>
   <div class="content">
-    <div class="navbar">
-      <div class="navbar-inner">
-          <div class="G-earch-inner bg-fff" flex="">
-              <p class="item compre active" data-id="1" data-type="compre" flex="main:center cross:center">
-                  <span id="rankList" class="">最新</span>
-                  <a flex="dir:top main:center cross:center" class="">
-                    <i class="iconfont icon-shangjiantou" data=""></i>
-                    <i class="iconfont icon-xiajiantou1 active"></i>
-                  </a>
-              </p>
-              <p class="item sales active" data-id="2" data-type="sales" flex="main:center cross:center">
-                  <span class="">最热</span>
-                  <a flex="dir:top main:center cross:center" class="">
-                    <i class="iconfont icon-shangjiantou" data=""></i>
-                    <i class="iconfont icon-xiajiantou1 active"></i>
-                  </a>
-              </p>
-              <p class="item price active" data-id="3" flex="main:center cross:center" data-type="desc">
-                  <span class="">评论</span>
-                  <a flex="dir:top main:center cross:center" class="">
-                    <i class="iconfont icon-shangjiantou" data=""></i>
-                    <i class="iconfont icon-xiajiantou1 active"></i>
-                  </a>
-              </p>
-          </div>
-      </div>
-    </div>
     <div class="search">
       <div class="search-main">
-          <input type="text" v-model="searchText" placeholder="搜索您需要的资源名" confirm-type='search'  @confirm="confirm($event)" @focus="searchChanges" @input="searchChanges" class="search-inp">
+          <input type="text" v-model="searchText" placeholder="搜索您需要的资源名" confirm-type='search'  @confirm="confirm($event)" class="search-inp">
           <i class="iconfont icon-sousuo" @click="searchListFun(searchText)"></i>
       </div>
     </div>
@@ -47,6 +20,9 @@
             </div>
         </li>
     </ul>
+    <div class="empty-con fl-row-center" v-if="listData.length == 0">
+      <span>抱歉，暂无此网赚思路</span>
+    </div>
   </div>
 </div>
 
@@ -73,7 +49,7 @@ export default {
     getGroups() {
       let params = {
             url: 'get/details/list',
-            data: {page:this.page,rows:5}
+            data: {page:this.page,rows:10}
         }
         post(params).then(res => {
           this.page = res.page;
@@ -131,7 +107,6 @@ export default {
   align-items: center;
   background-color: #fff;
   border-bottom: 1px solid #ececec;
-  margin-top:10px;
   .search-main{
     display:-webkit-flex;
     align-items:center;
@@ -257,4 +232,12 @@ height:.35rem;
     font-size:.12rem;
   }
 }
+.fl-row-center{
+  text-align: center;
+  font-size:16px;
+  color:#999;
+  padding-top:30rpx;
+  width:100%;
+}
+
 </style>

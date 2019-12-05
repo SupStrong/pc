@@ -54,7 +54,22 @@
 		},
 		"miniprogram": {
 			"current": 15,
-			"list": []
+			"list": [
+				{
+					"id": -1,
+					"name": "商品详情",
+					"pathName": "pages/goods/details/main",
+					"query": "id= 5dbaf80edd86a038b82c7cdd",
+					"scene": null
+				},
+				{
+					"id": -1,
+					"name": "pages/goods/details/main",
+					"pathName": "pages/goods/details/main",
+					"query": "id=5dbaf80edd86a038b82c7cdd",
+					"scene": null
+				}
+			]
 		}
 	}
 }

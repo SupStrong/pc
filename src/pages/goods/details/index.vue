@@ -8,9 +8,8 @@
           @change="currentChange"
           :indicator-dots="false"
           :current="current"
-          autoplay="true"
           interval="3000"
-          duration="300"
+          duration="3000"
           :circular="true"
         >
           <block v-for="(item, index) in goodsData.image" :key="index">
@@ -73,10 +72,21 @@ export default {
   },
   onLoad(res) {
     this.routeData = this.$root.$mp.query;
+    if(res.id != ""){
+      this.routeData.id = res.id;
+    }
     this.getCouponDetails(this.routeData.id);
   },
   onShow(){
-    // this.operate.recommend = false;
+  },
+  onShareAppMessage: function() {
+    let that = this;
+    return {
+      title: '商品详情',
+      path:
+        "/pages/goods/details/main?id="+that.id,
+      imageUrl: ""
+    };
   },
   methods: {
     ...mapMutations([
@@ -140,9 +150,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.page-content{
-  padding-bottom: .5rem;
-}
 .goods-swiper {
   height: 3.75rem;
   width: 3.75rem;

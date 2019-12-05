@@ -6,6 +6,8 @@ export default {
   data() {
     return {};
   },
+  onLoad(){
+  },
   onShow() {
     checkUpdateVersion();
      //检查手机型号做适配
@@ -28,6 +30,7 @@ export default {
   },
   computed: {
     ...mapState({
+      userInfo:{}
     })
   },
   methods: {

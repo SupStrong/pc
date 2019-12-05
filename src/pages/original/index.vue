@@ -4,10 +4,9 @@
       <div class="group">
         <div class="group-frist">
           <scroll-view scroll-x="true" class="group-frist-con">
-            <div
-              v-for="(item,index) in Groups" :key="index" @click="getClicks(item.class_id)" class="group-frist-item">
-              <span class="item-name">{{item.name}}</span>
-              <span class="item-line"></span>
+            <div v-for="(item,index) in Groups" :key="index" @click="getClicks(item.class_id,index)" class="group-frist-item">
+              <span class="item-name" :class="['item-name',isShowid == index ?'text-active' :'']">{{item.name}}</span>
+              <span :class="['item-line',isShowid == index ?'active' :'']"></span>
             </div>
           </scroll-view>
         </div>
@@ -47,7 +46,9 @@ export default {
       Groups:[],
       listData:[],
       page:1,
-      groupInterest:1
+      groupInterest:1,
+      isShowid:0,
+      getIdList:1
     };
   },
   computed: {
@@ -62,7 +63,9 @@ export default {
             this.Groups = res.data;
         })
     },
-    getClicks(id){
+    getClicks(id,index){
+      this.isShowid = index;
+      this.getIdList = id;
       this.page = 1;
       this.listData = [];
       this.getGroups(id);
@@ -96,7 +99,7 @@ export default {
     wx.showNavigationBarLoading();
     this.page = 1;
     this.listData = []
-    this.getGroups(1);
+    this.getGroups(this.getIdList);
     setTimeout(() => {
       wx.hideNavigationBarLoading();
       wx.stopPullDownRefresh();
@@ -198,7 +201,12 @@ $orange: #f36e20;
     }
   }
 }
-
+.active {
+  background: orange!important;
+}
+.text-active{
+  color: orange!important;
+}
 .tag-con {
   border-bottom: 0.01rem solid #e7e7e7;
   width: 3.75rem;

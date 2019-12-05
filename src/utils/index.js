@@ -44,7 +44,31 @@ export function showPopup(msg, isicon) {
         duration: 2000,
     })
 }
-//wx.login
+export function getLogin(encryptedData, iv,callback = function() {}) {
+    wx.login({
+        success (resq) {
+        if (resq.code) {
+            var that = this;
+            let params = {
+                url: 'getUninoid',
+                data: {
+                    apiName: 'WX_DECODE_USERINFO',
+                    encryptedData: encryptedData,
+                    iv:iv,
+                    code:resq.code
+                }
+            }
+            get(params).then(res => {
+                if(res._id!=""){
+                    callback(res)
+                }
+            })
+        } else {
+            console.log('登录失败！' + res.errMsg)
+        }
+        }
+    })
+}
 export function Login(type, en, iv, callback = function() {}) {
     let _this = this;
     let params = {
@@ -250,7 +274,6 @@ export function LockunionId(e, type, callback = function() {}) {
     } else {
         if (e.target.errMsg == 'getUserInfo:ok') {
             Login(type, e.target.encryptedData, e.target.iv, function(res) {
-                // console.log(res)
                 if (res.unionid.length > 0) {
                     callback()
                 }
@@ -361,6 +384,7 @@ export default {
     sendFormId,
     checkLoginStatus,
     GetQueryString,
+    getLogin,
     exchangeEl
 }
 var page = [
