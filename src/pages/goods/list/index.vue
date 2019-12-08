@@ -2,7 +2,7 @@
     <!--banner end -->
     <div class="goods-ul">
       <div class="li" v-for="(item,index) in cateItemsData" :key="index"
-      @click="setRouter('/pages/goods/details/main',item._id)">
+        @click="setRouter('/pages/goods/details/main',item._id)">
         <div class="img-box">
           <img :src="item.image[0]" alt="">
         </div>

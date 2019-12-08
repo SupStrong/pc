@@ -102,7 +102,12 @@ export default {
       else if(!myreg.test(this.data.phone)){showPopup(errMsgObj.phone_err); return false}
       else if(!this.data.class_name){showPopup(errMsgObj.class_name); return false}
       else if(!this.data.remark){showPopup(errMsgObj.remark); return false}
-
+      if(wx.getStorageSync('UserInfo').openId == undefined || wx.getStorageSync('UserInfo').openId == ''){
+        showPopup('请您先在提交建议前先进行用户授权~');
+        return false;
+      } 
+      this.data.nickName = wx.getStorageSync('UserInfo').nickName;
+      this.data.openid = wx.getStorageSync('UserInfo').openid;
       let that = this;
       let params = {
         url: 'post/proposal/info',

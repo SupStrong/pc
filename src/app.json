@@ -9,7 +9,8 @@
         "pages/goods/details/main",
         "pages/resources/main", 
         "pages/resoures-details/main",
-        "pages/user/main"
+        "pages/user/main",
+        "pages/userresouse/main"
     ],
     "window": {
         "backgroundTextStyle": "light",

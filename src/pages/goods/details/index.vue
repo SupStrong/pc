@@ -27,9 +27,9 @@
       <div class="goods-bd G-Plr-15">
         <div class="fl-row-justy top">
           <h2 class="goods-name G-more-cloum G-col-2">{{goodsData.title}}</h2>
-          <div class="share-content fl-column-center">
-            <i class="iconfont icon-fenxiang"></i>
-            <p>分享</p>
+          <div class="share-content fl-column-center" @click="setTop()">
+            <i :class="['iconfont','icon-shoucang',isTop ? 'active': '' ]"></i>
+            <p>收藏</p>
           </div>
         </div>
         <div v-if="goodsData.info!=''" class="promotion-text G-more-cloum G-col-3">{{goodsData.info}}</div>
@@ -67,7 +67,8 @@ export default {
       goodsData:{
         image:[],
         details:null
-      }
+      },
+      isTop: false,
     };
   },
   onLoad(res) {
@@ -100,6 +101,32 @@ export default {
         post(params).then(res => {
           this.goodsData = res.data[0];
         })
+    },
+      setTop() {
+      if(this.isTop){
+        return false
+      }
+      if(wx.getStorageSync('UserInfo').openId == undefined || wx.getStorageSync('UserInfo').openId == ''){
+        showPopup('请您先在用户页面进行用户授权~');
+        return false;
+      }  
+      this.goodsData.openId = wx.getStorageSync('UserInfo').openId;
+      this.goodsData.collect_id = this.goodsData._id,
+      delete this.goodsData._id
+      let that = this;
+      let params = {
+        url: 'collectgoods',
+        data:this.goodsData
+      };
+        post(params).then(res => {
+          if (res.code) {
+            showPopup(res.message);
+            this.isTop = true;
+          }else{
+            this.isTop = true;
+            showPopup(res.message);
+          }
+        });
     },
     currentChange(e) {
       this.current = e.mp.detail.current;

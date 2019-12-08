@@ -16,6 +16,12 @@
       <div class="bd G-bg-white">
           <div class="article-des" v-html="articleDes"></div>
       </div>
+      <div class="top-con G-bg-white" @click="setTop()">
+        <span class="icon-content G-fx-cc">
+          <i :class="['iconfont','icon-shoucang',isTop ? 'active': '' ]"></i>
+        </span>
+        <p class="top-num">人推荐</p>
+      </div>
     </div>
   </div>
 </template>
@@ -35,7 +41,8 @@ export default {
   data() {
     return {
       id: 0,
-      routeData:{details:null}
+      routeData:{details:null},
+      isTop: false,
     };
   },
   computed: {
@@ -75,7 +82,34 @@ export default {
         path: path,
         query: { id: id, name: n, title: t, search: s }
       });
-    }
+    },
+    setTop() {
+      if(this.isTop){
+        return false
+      }
+      console.log(wx.getStorageSync('UserInfo').openId);
+      if(wx.getStorageSync('UserInfo').openId == undefined || wx.getStorageSync('UserInfo').openId == ''){
+        showPopup('请您先在用户页面进行用户授权~');
+        return false;
+      }  
+      this.routeData.openId = wx.getStorageSync('UserInfo').openId;
+      this.routeData.collect_id = this.routeData._id,
+      delete this.routeData._id
+      let that = this;
+      let params = {
+        url: 'collectoriginal',
+        data:this.routeData
+      };
+        post(params).then(res => {
+          if (res.code) {
+            showPopup(res.message);
+            this.isTop = true;
+          }else{
+            this.isTop = true;
+            showPopup(res.message);
+          }
+        });
+    },
   },
   watch: {}
 };
@@ -211,5 +245,30 @@ $orange: #f36e20;
     width:100%;
     height:100%;
   }
+}
+.top-con {
+    margin: 0 auto;
+    &.active {
+      .icondianzan {
+        color: $orange;
+      }
+    }
+    .icon-content {
+      width: 0.45rem;
+      height: 0.45rem;
+      margin: 0 auto 0.12rem auto;
+      border-radius: 50%;
+      box-shadow: 0px 3px 5px 0 rgba(0, 0, 0, 0.2);
+      background-color: #f7f7f7;
+    }
+    .iconfont {
+      font-size: 0.22rem;
+      color: #cccccc;
+    }
+    .top-num {
+      text-align: center;
+      font-size: 0.14rem;
+      color: $orange;
+    }
 }
 </style>

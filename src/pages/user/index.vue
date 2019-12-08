@@ -47,17 +47,11 @@
     <div class="single-box">
       <div class="head fl-row-left"><span class="G-Fsize-16 G-Fweight-700 G-color-333">更多</span></div>
       <div class="more fl-row-left">
-        <div class="fl-column-center box" @click="!hasUserInfo ? false : setRouter('/pages/dashboard/collection/main')">
-          <button
-            class="number"
-            v-if="!hasUserInfo"
-            open-type="getPhoneNumber"
-            @getphonenumber="authorization($event,'mobile','/pages/dashboard/collection/main')"
-          ></button>
+        <div class="fl-column-center box" @click="!hasWxInfo ? showTips() : setRouter('/pages/userresouse/main')">
           <i class="iconfont iconshoucang- G-color-f13a"></i>
           <p class="fl-row-center">收藏</p>
         </div>
-        <div class="fl-column-center box" @click="!hasUserInfo ? false :  setRouter('/pages/dashboard/ask-answer/main')">
+        <div class="fl-column-center box">
           <button
             class="number"
             v-if="!hasUserInfo"
@@ -223,50 +217,13 @@ export default {
   onLoad(res) {
     if(wx.getStorageSync('UserInfo') !=""){
       this.userInfo = wx.getStorageSync('UserInfo')
+      this.SetUserInfo(wx.getStorageSync('UserInfo'))
     }
   },
   onShow() {
-    // let taht = this
-    // if(taht.order_id){
-    //   setTimeout(function(){
-    //     taht.$router.push({ path: '/pages/order/order-detail/main',query:{
-    //       id:taht.order_id,
-    //       orderType:'0'
-    //     }})
-    //   },300)
-    // }
-    // wx.removeStorageSync('houseType')
-    // if(this.scanCode){
-    //   this.$router.push({ path: '/pages/dashboard/cash/list/main'})
-    // }
-    
-    // if(this.cardDetail){
-    //   this.$router.push({ path: '/pages/coupons/list/main'})
-    // }
-    // var that = this;
-    // new Promise(function(resolve, reject) {
-    //   if (that.Tokens.unionid || that.Tokens.user_id) {
-    //     resolve();
-    //   } else {
-    //     that.intervalHistory = setInterval(function() {
-    //       if (that.Tokens.unionid || that.Tokens.user_id) {
-    //         reject();
-    //       }
-    //     }, 10);
-    //   }
-    // }).then(function(result) {
-    //   that.getDashBoard();
-    //   if (that.Tokens.unionid){
-    //     that.getWithdraw();
-    //     that.checkIsPartner();
-    //   }
-    // }).catch(function(reason) {
-    //   that.getDashBoard();
-    //   if (that.Tokens.unionid){
-    //     that.getWithdraw();
-    //     that.checkIsPartner();
-    //   }
-    // });
+      if(wx.getStorageSync('UserInfo') !=""){
+      this.userInfo = wx.getStorageSync('UserInfo')
+    }
   },
   onTabItemTap(item) {
     app.aldstat.sendEvent("按钮-厨百底部导航-我的");
@@ -297,13 +254,12 @@ export default {
     ...mapState({
       userInfo: state => state.userInfo,
       hasWxInfo: function(state) {
-        
+        console.log(wx.getStorageSync('UserInfo').openId,"a/")
         if (state.userInfo.openId) {
           return true;
         }
-        return false;
+          return false;
       },
-
     })
   },
   methods: {
@@ -321,6 +277,12 @@ export default {
             }, 300)
         }
     },
+  showTips(){
+    showPopup('请您先进行用户授权~')
+  },
+  setRouter(path,id){
+      this.$router.push({ path: path, query: {}})
+  },
   },
   watch: {
   }
