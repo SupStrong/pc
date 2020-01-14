@@ -82,11 +82,7 @@ export default {
       brandArray:[{id:"1",name:"优惠券"},{id:"2",name:"网赚思路"},{id:"3",name:"每日羊毛"},{id:"4",name:"其他"}]
     };
   },
-  computed: {
-    ...mapState({
-      partner_id:state=>state.partner_id,
-      packCount:state=>state.packCount,
-    }),},
+  computed: {},
   methods: {
     saveData() {
       let errMsgObj = {
@@ -107,7 +103,7 @@ export default {
         return false;
       } 
       this.data.nickName = wx.getStorageSync('UserInfo').nickName;
-      this.data.openid = wx.getStorageSync('UserInfo').openid;
+      this.data.openId = wx.getStorageSync('UserInfo').openId;
       let that = this;
       let params = {
         url: 'post/proposal/info',

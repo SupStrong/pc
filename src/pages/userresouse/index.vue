@@ -8,7 +8,7 @@
     </div>
     <div class="goods-ul" v-if="currentType == 1">
         <div class="li" v-for="(item,index) in listData" :key="index"
-            @click="setRouter('/pages/goods/details/main',item.collect_id)">
+            @click="setRouter('/pages/goods/details/main',item._id)">
             <div class="img-box">
             <img :src="item.image[0]" alt="">
             </div>
@@ -80,7 +80,7 @@ export default {
     return {
       listData:[],
       page : 1,
-      getType:'list',
+      getTyshoucape:'list',
       tab: [{
             name: '商品收藏',
             type: 1
@@ -134,17 +134,17 @@ export default {
         this.$router.push({ path: path, query: {id:id}})
     },
   },
-  onReachBottom() {
-    if (this.page == 0) {
-      //加载完成
-      return false;
-    }
-      this.getGroups(this.currentType);
-  },
+  // onReachBottom() {
+  //   if (this.page == 0) {
+  //     //加载完成
+  //     return false;
+  //   }
+  //     this.getGroups(this.currentType);
+  // },
     onPullDownRefresh() {
     wx.showNavigationBarLoading();
     this.page = 1;
-    this.listData = []
+    this.listData = [];
     this.getGroups(this.currentType);
     setTimeout(() => {
       wx.hideNavigationBarLoading();

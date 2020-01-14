@@ -42,7 +42,7 @@
           </div>
             <div class="hotday-cont">
                 <ul>
-                    <li v-for="(item,index) of goodList" :key="index"><i>{{index + 1}}</i>.<a>{{item.title}}</a></li>
+                    <li v-for="(item,index) of goodList" :key="index"  @click="setRouter('/pages/goods/details/main',item._id)"><i>{{index + 1}}</i>.<a>{{item.title}}</a></li>
                 </ul>
             </div>
         </div>

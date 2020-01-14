@@ -30,6 +30,9 @@
           <img :src="item.image[0]" class="item-img">
         </div>
     </div>
+      <div class="empty-con fl-row-center" v-if="listData.length == 0">
+        <span>biu~ 当前无此分类信息,小赚会及时更新的</span>
+      </div>
   </div>
 </template>
 

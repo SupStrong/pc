@@ -17,7 +17,7 @@
       </div>
       <div class="top-con G-bg-white" @click="setTop()">
         <span class="icon-content G-fx-cc">
-          <i :class="['iconfont','icon-shoucang',isTop ? 'active': '' ]"></i>
+          <i :class="['iconfont','icon-aixin',isTop ? 'active': '' ]"></i>
         </span>
         <p class="top-num">人推荐</p>
       </div>
@@ -53,6 +53,10 @@ export default {
         tags: [],
         top: "",
         remark: ""
+      },
+      postData:{
+        openId:"",
+        goods:[]
       }
     };
   },
@@ -69,12 +73,15 @@ export default {
   },
   methods: {
     initData(id){
+      let openid = "";
+      wx.getStorageSync('UserInfo').openId == undefined || wx.getStorageSync('UserInfo').openId == '' ? openId = "" : openid = wx.getStorageSync('UserInfo').openId
         let params = {
             url: 'get/resouces/details',
-            data: {id:id}
+            data: {id:id,openId:openid}
         }
         post(params).then(res => {
           this.routeData = res.data[0];
+          this.isTop = res.status
         })
     },
     // 更新
@@ -89,28 +96,23 @@ export default {
     // },
     //收藏
       setTop() {
-      if(this.isTop){
-        return false
-      }
-      console.log(wx.getStorageSync('UserInfo').openId);
       if(wx.getStorageSync('UserInfo').openId == undefined || wx.getStorageSync('UserInfo').openId == ''){
         showPopup('请您先在用户页面进行用户授权~');
         return false;
       }  
-      this.routeData.openId = wx.getStorageSync('UserInfo').openId;
-      this.routeData.collect_id = this.routeData._id,
-      delete this.routeData._id
+      this.postData.openId = wx.getStorageSync('UserInfo').openId;
+      this.postData.goods.push(this.routeData._id);
       let that = this;
       let params = {
         url: 'collectresoures',
-        data:this.routeData
+        data:this.postData
       };
         post(params).then(res => {
           if (res.code) {
             showPopup(res.message);
-            this.isTop = true;
+            this.isTop = res.status;
           }else{
-            this.isTop = true;
+            this.isTop = res.status;
             showPopup(res.message);
           }
         });

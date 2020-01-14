@@ -28,7 +28,7 @@
         <div class="fl-row-justy top">
           <h2 class="goods-name G-more-cloum G-col-2">{{goodsData.title}}</h2>
           <div class="share-content fl-column-center" @click="setTop()">
-            <i :class="['iconfont','icon-shoucang',isTop ? 'active': '' ]"></i>
+            <i :class="['iconfont','iconfont-class','icon-aixin',isTop ? 'active': '' ]"></i>
             <p>收藏</p>
           </div>
         </div>
@@ -69,6 +69,10 @@ export default {
         details:null
       },
       isTop: false,
+      postData:{
+        openId:"",
+        resoures:[]
+      }
     };
   },
   onLoad(res) {
@@ -94,36 +98,35 @@ export default {
       "setmallCityDefaults",
     ]),
     getCouponDetails(id){
+      let openid = "";
+      wx.getStorageSync('UserInfo').openId == undefined || wx.getStorageSync('UserInfo').openId == '' ? openId = "" : openid = wx.getStorageSync('UserInfo').openId
       let params = {
             url: 'get/coupon/onedetails',
-            data: {id:id}
+            data: {id:id,openId:openid}
         }
         post(params).then(res => {
           this.goodsData = res.data[0];
+          this.isTop = res.status;
         })
     },
       setTop() {
-      if(this.isTop){
-        return false
-      }
       if(wx.getStorageSync('UserInfo').openId == undefined || wx.getStorageSync('UserInfo').openId == ''){
         showPopup('请您先在用户页面进行用户授权~');
         return false;
-      }  
-      this.goodsData.openId = wx.getStorageSync('UserInfo').openId;
-      this.goodsData.collect_id = this.goodsData._id,
-      delete this.goodsData._id
+      } 
+      this.postData.openId = wx.getStorageSync('UserInfo').openId;
+      this.postData.resoures[0] = this.routeData.id ;
       let that = this;
       let params = {
         url: 'collectgoods',
-        data:this.goodsData
+        data:this.postData
       };
         post(params).then(res => {
           if (res.code) {
             showPopup(res.message);
-            this.isTop = true;
+            this.isTop = res.status;
           }else{
-            this.isTop = true;
+            this.isTop = res.status;
             showPopup(res.message);
           }
         });
@@ -351,5 +354,12 @@ export default {
       margin: 0 5px;
     }
   }
+}
+.iconfont-class {
+  color: #cccccc!important;
+  font-size: 0.2rem;
+}
+.active{
+  color: red!important;
 }
 </style>

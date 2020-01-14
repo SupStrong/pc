@@ -19,108 +19,23 @@
             <open-data type="userNickName" class="nickName"></open-data>
           </div>
         </div>
-        <!-- panel -->
-        <div class="inner-box fl-row-around">
-          <div class="fl-column-center" 
-            v-for="(item,index) in dashboard.panel" :key='index'
-            @click="(index<2?!hasWxInfo:!hasUserInfo) ? false : setRouter(pagePath[index].path)">
-            <button
-              class="number"
-              v-if="!hasWxInfo && index<2"
-              open-type="getUserInfo"
-              @getuserinfo="getUserInfo($event,'unionid',pagePath[index].path)"
-            ></button>
-            <button
-              class="number"
-              v-if="!hasUserInfo && index>=2"
-              open-type="getPhoneNumber"
-              @getphonenumber="authorization($event,'mobile',pagePath[index].path)"
-            ></button>
-            <span class="title">{{item.number}}</span>
-            <p class="fl-row-center">{{item.name}}</p>
-            <span class="line" v-if="index!=3"></span>
-          </div>
-        </div>
+      </div>
+    </div>
+    <div class="list">
+      <div class="fl-row-justy list-item"@click="!hasWxInfo ? showTips() : setRouter('/pages/userresouse/main')">
+        <span class="tit">我的收藏</span>
+        <i class="iconfont iconxiangyou item-icon"></i>
+      </div>
+      <div class="fl-row-justy list-item share" @click="!hasWxInfo ? showTips() : setRouter('/pages/share/main')">
+        <span class="tit">分享海报</span>
+        <i class="iconfont iconxiangyou item-icon"></i>
+      </div>
+      <div class="fl-row-justy list-item" @click="!hasWxInfo ? showTips() : setRouter('/pages/proposal/main')">
+        <span class="tit">我的建议</span>
+        <i class="iconfont iconxiangyou item-icon"></i>
       </div>
     </div>
 
-    <div class="single-box">
-      <div class="head fl-row-left"><span class="G-Fsize-16 G-Fweight-700 G-color-333">更多</span></div>
-      <div class="more fl-row-left">
-        <div class="fl-column-center box" @click="!hasWxInfo ? showTips() : setRouter('/pages/userresouse/main')">
-          <i class="iconfont iconshoucang- G-color-f13a"></i>
-          <p class="fl-row-center">收藏</p>
-        </div>
-        <div class="fl-column-center box">
-          <button
-            class="number"
-            v-if="!hasUserInfo"
-            open-type="getPhoneNumber"
-            @getphonenumber="authorization($event,'mobile','/pages/dashboard/ask-answer/main')"
-          ></button>
-          <i class="iconfont iconwenda G-color-bule1"></i>
-          <p class="fl-row-center">问答</p>
-        </div>
-        <div class="fl-column-center box" @click="!hasUserInfo ? false : setRouter('/pages/dashboard/my-house/main')">
-          <button
-            class="number"
-            v-if="!hasUserInfo"
-            open-type="getPhoneNumber"
-            @getphonenumber="authorization($event,'mobile','/pages/dashboard/my-house/main')"
-          ></button>
-          <i class="iconfont iconshafa G-color-f36e"></i>
-          <p class="fl-row-center">房屋</p>
-        </div>
-        <div class="fl-column-center box" @click="!hasWxInfo ? false :setRouter('/pages/dashboard/promote/main')">
-          <button
-            class="number"
-            v-if="!hasWxInfo"
-            open-type="getUserInfo"
-            @getuserinfo="getUserInfo($event,'unionid','/pages/dashboard/promote/main')"
-          ></button>
-          <i class="iconfont iconbaifenbi G-color-f13a"></i>
-          <p class="fl-row-center">优惠</p>
-        </div>
-        <div class="fl-column-center box" @click="!hasWxInfo ? false : setRouter('/pages/dashboard/gift/gift-list/main')">
-          <button
-            class="number"
-            v-if="!hasWxInfo"
-            open-type="getUserInfo"
-            @getuserinfo="getUserInfo($event,'unionid','/pages/dashboard/gift/gift-list/main')"
-          ></button>
-          <i class="iconfont iconlipin G-color-f36e"></i>
-          <p class="fl-row-center">礼品</p>
-        </div>
-        <div class="fl-column-center box" @click="!hasWxInfo ? false : setRouter('/pages/saled/list/main')">
-          <button
-            class="number"
-            v-if="!hasWxInfo"
-            open-type="getUserInfo"
-            @getuserinfo="getUserInfo($event,'unionid','')"
-          ></button>
-          <i class="iconfont iconweixiu G-color-f36e"></i>
-          <p class="fl-row-center">售后</p>
-        </div>
-        <div class="fl-column-center box" @click="!hasWxInfo ? false :setRouter('/pages/partner/my-message/message-list/main')">
-          <button
-            class="number"
-            v-if="!hasWxInfo"
-            open-type="getUserInfo"
-            @getuserinfo="getUserInfo($event,'unionid','/pages/partner/my-message/message-list/main')"
-          ></button>
-          <i class="iconfont iconxiaoxitongzhi G-color-f13a"></i>
-          <p class="fl-row-center">消息</p>
-        </div>
-        <div class="fl-column-center box" @click="!hasWxInfo ? false :setRouter('/pages/dashboard/vip-card/list/main')">
-          <i class="iconfont iconxinbaniconshangchuan- color-BE8F77 cards-icon"></i>
-          <p class="fl-row-center cards-font">会员</p>
-        </div>
-        <div class="fl-column-center box" @click="!hasWxInfo ? false :setRouter('/pages/dashboard/setting/main')">
-          <i class="iconfont iconshezhi G-color-bule1"></i>
-          <p class="fl-row-center">设置</p>
-        </div>
-      </div>
-    </div>
   </div>
 </template>
 
@@ -254,7 +169,6 @@ export default {
     ...mapState({
       userInfo: state => state.userInfo,
       hasWxInfo: function(state) {
-        console.log(wx.getStorageSync('UserInfo').openId,"a/")
         if (state.userInfo.openId) {
           return true;
         }
@@ -293,12 +207,14 @@ export default {
 $orange: #f36e20;
 page{
   height: unset;
+  background:#fff;
 }
 .content {
   overflow: hidden;
-  width: 100%;
+  height: 100vh;
   position: relative;
   padding-bottom: .05rem;
+  background:#fff
 }
 .userInfo {
   display: -webkit-flex;
@@ -314,8 +230,7 @@ page{
 
 .users {
   position: relative;
-  height:1.35rem;
-  margin-bottom: 0.7rem;
+  height:1.175rem;
   .user-bg{
     width:100%;
     height:100%;
@@ -348,7 +263,7 @@ page{
 }
 .pa-box{
   width:3.45rem;
-  background:rgba(255,255,255,1);
+  background:#f6f6f6;
   border-radius:6px;
   position:absolute;
   top:.4rem;
@@ -522,4 +437,43 @@ page{
 .cards-font{
   font-size: .15rem !important
 }
+.list {
+    padding: .05rem 0.15rem;
+    .list-item {
+      width: 100%;
+      height: 0.45rem;
+      background: rgba(246, 246, 246, 1);
+      border-radius: 0.04rem;
+      box-sizing: border-box;
+      padding: 0 0.15rem;
+      margin-bottom: 0.1rem;
+      position: relative;
+      &.share{
+        position: relative;
+        .share-btn{
+          position: absolute;
+          z-index: 1;
+          width: 100%;
+          height: 100%;
+          opacity: 0;
+          left: 0;
+          top: 0;
+        }
+      }
+      .tit {
+        color: #333;
+        font-size: 0.16rem;
+        font-weight: bold;
+      }
+
+      .item-icon {
+        color: #999;
+        width: 0.06rem;
+        height: 0.11rem;
+        line-height: 0.11rem;
+        font-size: 0.12rem;
+      }
+    }
+  }
+
 </style>

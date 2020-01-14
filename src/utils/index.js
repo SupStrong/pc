@@ -172,7 +172,6 @@ export function makePhoneCall(phoneNum) {
     }
     wx.getSetting({
         success(res) {
-            console.log(res.authSetting)
         }
     })
     wx.makePhoneCall({

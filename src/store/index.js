@@ -15,8 +15,6 @@ export default new Vuex.Store({
             state.partner_id = val;
         },
         SetUserInfo(state,val){
-            console.log(val,"val");
-            
             state.userInfo = val;
         },
         setTokenStatus(state, val) {
